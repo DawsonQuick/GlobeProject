@@ -239,7 +239,7 @@ private:
         glUseProgram(shaderProgram);
 
         GLuint chunkSize = glGetUniformLocation(shaderProgram, "chunkSize");
-        glUniform1i(chunkSize, 5000);
+        glUniform1i(chunkSize, ChunkManager::getChunkSize());
         GLuint numGroupsX = static_cast<GLuint>((numEntities + 255) / 256);
         glDispatchCompute(numGroupsX, 1, 1);
         glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT | GL_BUFFER_UPDATE_BARRIER_BIT);

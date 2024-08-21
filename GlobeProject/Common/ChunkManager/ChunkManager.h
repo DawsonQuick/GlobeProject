@@ -6,6 +6,7 @@
 #include <map>
 #include <vector>
 #include "./../../Common/Vendor/glm/glm.hpp"
+#include "./../../Common/WorldInteraction/WorldInteraction.h"
 #include <algorithm> // For std::find
 
 // Hash function for glm::ivec3
@@ -25,10 +26,28 @@ struct Vec3Equal {
     }
 };
 
+//Place the variable outside the namespace to make it "private" and only accessible through the getChunkSize() function
+namespace {
+   static int chunkSize = 5000;
+}
 
 namespace ChunkManager {
 	inline std::unordered_map<glm::ivec3, std::vector<entt::entity>, Vec3Hasher, Vec3Equal> chunkToEntityMap;
 
+
+
+    // Getter that returns a reference
+    inline int getChunkSize() {
+        return chunkSize;
+    }
+
+    //If the chunk size is changed, need to clear out the current map due to the mapping being incorrect ratio
+    inline void setChunkSize(int tmpChunkSize) {
+        if (tmpChunkSize > 0) {
+            chunkToEntityMap.clear();
+            chunkSize = tmpChunkSize;
+        }
+    }
     
     inline void removeEntityFromChunk(const glm::ivec3& chunk, const entt::entity& entity) {
         // Access the chunk directly
@@ -67,6 +86,23 @@ namespace ChunkManager {
             chunkToEntityMap[chunk] = std::vector<entt::entity>{ entity };
         }
     }
+
+    //For now put the ray collition function inside of the ChunkManager
+    inline entt::entity findRayIntersectEntity(const Ray& ray) {
+
+        //TODO : algorithm to go through the chunk data to see which entity the ray intersects
+        // First: calculate which chunk the ray originated from (ray.origin/chunksize)
+        //      (when determining the chunk rule of thumb is to add 0.5 to the result and take the math.floor , this is to round anything above .5 to the higher value and below 0.5 to the lower)
+        // Second loop through all the entities in the chunk to see if the ray intersects them directly
+        //      (Possibly use a compute shader , determine if entity was hit and how far. want to select the closet to the origin)
+        // If not, Third step the ray out using the direction and step out 1 additional chunksize (ray.direction * chunksize = newLocation)
+        // Forth Then convert that new location to its chunk like in step 1
+        // Fith Then repeat step two just with this new location
+        // Repeat steps 3 - 5 till entity intersection
+        // If a intercection occurs return the 
+    }
+
+
     
 
 }

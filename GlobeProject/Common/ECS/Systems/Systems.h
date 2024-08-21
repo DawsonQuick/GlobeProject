@@ -35,6 +35,10 @@ vec3 positionInOrbit(float r, float T, float t, float i, float omega) {
     return vec3(x, y, z);
 }
 
+float customRound(float value) {
+    return floor(value + 0.5);
+}
+
 // Structure definition outside of the buffer block
 struct OrbitData {
     vec4 orbitParams; // Radius, Inclination, Omega, Period
@@ -92,7 +96,7 @@ void main() {
     vec3 newPosition = positionInOrbit(radius, period, currentTime, inclination, omega);
 
     positions[idx].position = newPosition;
-    positions[idx].chunk = ivec3((newPosition.x/chunkSize),(newPosition.y/chunkSize),(newPosition.z/chunkSize));
+    positions[idx].chunk = ivec3(customRound(newPosition.x/chunkSize),customRound(newPosition.y/chunkSize),customRound(newPosition.z/chunkSize));
     BoundingBoxData bbox = bb[idx];
 
     bbox.RBB = newPosition + vec3(100.0, -100.0, -100.0);
@@ -104,7 +108,7 @@ void main() {
     bbox.LFT = newPosition + vec3(-100.0, 100.0, 100.0);
     bbox.LFB = newPosition + vec3(-100.0, -100.0, 100.0);
 
-    vec3 color = bbox.Color;
+    vec3 color = bb[idx].Color;
 
     bbox.Color = color;
     bb[idx] = bbox;
