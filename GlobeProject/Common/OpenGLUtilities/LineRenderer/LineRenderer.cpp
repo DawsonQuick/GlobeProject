@@ -84,18 +84,21 @@ LineRenderer::LineRenderer(bool isColorsEmbdedded): isColorsEmbdedded(isColorsEm
     m_currentColor = glm::vec3(1.0f, 1.0f, 1.0f);
     m_cachedUniforms = false;
 
-    initSSBO(1000);
+    glGenBuffers(1, &ssbo);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, 1000 * sizeof(float), nullptr, GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
 LineRenderer::~LineRenderer() {
 
 }
 
-void LineRenderer::appendLines(std::vector<float>& newLines) {
+void LineRenderer::appendLines(std::vector<float>& newLines, bool forceRefresh) {
     //trajectoryData.assign(newLines.begin(), newLines.end());
     //bindBuffers();
 
-    updateSSBO(newLines);
+    updateSSBO(newLines, forceRefresh);
 }
 void LineRenderer::setColor(glm::vec3 newColor) {
     m_currentColor = newColor;
@@ -141,28 +144,21 @@ void LineRenderer::render(glm::mat4 model, glm::mat4 view, glm::mat4 projection)
 
 
 //------------PRIVATE METHODS----------------------
-void LineRenderer::initSSBO(size_t initialSize) {
-    glGenBuffers(1, &ssbo);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
-
-    glBufferStorage(GL_SHADER_STORAGE_BUFFER, initialSize * sizeof(float), nullptr, GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
-    persistentMappedBuffer = (float*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, initialSize * sizeof(float), GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
-
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
-
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
-}
-
-void LineRenderer::updateSSBO(const std::vector<float>& newLines) {
+void LineRenderer::updateSSBO(const std::vector<float>& newLines, bool forceUpdate) {
     currentBufferSize = newLines.size();
 
-    // Ensure that the SSBO has enough space (resize logic if necessary)
-    if (currentBufferSize > maxBufferSize) { // If the data exceeds initial allocation
-        glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
-        initSSBO(currentBufferSize); // Reinitialize with a larger size
+    // Check if we need to resize the SSBO
+    if (forceUpdate || currentBufferSize > maxBufferSize) {
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+        glBufferData(GL_SHADER_STORAGE_BUFFER, currentBufferSize * sizeof(float), nullptr, GL_DYNAMIC_DRAW);
         maxBufferSize = currentBufferSize;
     }
 
     // Update the SSBO with the new data
-    std::memcpy(persistentMappedBuffer, newLines.data(), currentBufferSize * sizeof(float));
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+    void* ptr = glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_WRITE_ONLY);
+    if (ptr) {
+        std::memcpy(ptr, newLines.data(), currentBufferSize * sizeof(float));
+        glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+    }
 }

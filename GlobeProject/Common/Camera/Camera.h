@@ -8,6 +8,7 @@
 #include "../Vendor/glm/gtc/type_ptr.hpp"
 #include "./../../Common/OpenGLUtilities/LineRenderer/LineRenderer.h"
 #include "./../WorldInteraction/WorldInteraction.h"
+#include "./../../Common/ChunkManager/ChunkManager.h"
 struct CameraInfo {
 	LineRenderer lineRenderer;
 
@@ -22,7 +23,12 @@ struct CameraInfo {
 	Ray ray;
 	void renderRay() {
 		if (isRaySet) {
-			lineRenderer.appendLines(ray.lineVertices);
+			isRaySet = false;
+			lineRenderer.appendLines(ray.lineVertices,true);
+			lineRenderer.render(glm::mat4(1.0f), view, projection);
+		}
+		else {
+			lineRenderer.appendLines(ray.lineVertices, false);
 			lineRenderer.render(glm::mat4(1.0f), view, projection);
 		}
 	}
@@ -32,7 +38,7 @@ struct CameraInfo {
 	}
 
 };
-
+#pragma optimize("", off)  // Disable optimizations for the Camera class
 class Camera
 {
 public:
@@ -61,4 +67,4 @@ private:
 	int m_WindowHeight;
 
 };
-
+#pragma optimize("", on)  // Re-enable optimizations for the rest of the code

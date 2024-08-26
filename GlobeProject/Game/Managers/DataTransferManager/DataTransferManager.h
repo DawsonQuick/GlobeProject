@@ -15,6 +15,7 @@ private:
 	LockFreeMap<DataTransferTypes,std::shared_ptr<DoubleBuffer<RenderTransferData>>> doubleBufferMap;
 	float simulationFrameRate;
 	bool pauseSimulationState;
+	bool terminateSignal;
 
 	DataTransferManager() {
 		//std::shared_ptr <DoubleBuffer<float>> tmp = std::make_shared<DoubleBuffer<float>>(1);
@@ -24,6 +25,7 @@ private:
 		doubleBufferMap.write(DataTransferTypes::TEST, tmpTransform);
 
 		pauseSimulationState = false;
+		terminateSignal = false;
 	}
 
 	DataTransferManager(const DataTransferManager&) = delete;
@@ -34,6 +36,7 @@ public:
 	std::shared_ptr<DoubleBuffer<RenderTransferData>> getDoubleBuffer(DataTransferTypes key);
 	float& getSimulationFrameRate();
 	bool& pauseSimulation();
+	bool& terminationSignal();
 };
 
 

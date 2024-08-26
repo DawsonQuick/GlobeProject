@@ -120,12 +120,14 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>C:\Users\Dawson Quick\Downloads\glew-2.1.0-win32\glew-2.1.0\include;C:\Users\Dawson Quick\Downloads\glfw-3.3.8.bin.WIN64\glfw-3.3.8.bin.WIN64\include;C:\Users\Dawson Quick\source\repos\OpenGLTest\OpenGLTest\vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>MaxSpeed</Optimization>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -141,9 +143,10 @@
     <ClCompile Include="Common\ECS\Systems\ECSRegistry\Registry.cpp" />
     <ClCompile Include="Common\ModelLoading\AssimpLoader\AssimpLoader.cpp" />
     <ClCompile Include="Common\Camera\Camera.cpp" />
-    <ClCompile Include="Common\Clock\GameClock.cpp" />
     <ClCompile Include="Common\ModelLoading\ModelManager\ModelManager.cpp" />
     <ClCompile Include="Common\OpenGLUtilities\LineRenderer\LineRenderer.cpp" />
+    <ClCompile Include="Common\OpenGLUtilities\Skybox\Skybox.cpp" />
+    <ClCompile Include="Common\Utilities\PerlinNoise\PerlinNoise.cpp" />
     <ClCompile Include="Common\Utilities\ThreadPool\ThreadPool.cpp" />
     <ClCompile Include="Common\Vendor\imgui\imgui.cpp" />
     <ClCompile Include="Common\Vendor\imgui\imgui_demo.cpp" />
@@ -151,14 +154,14 @@
     <ClCompile Include="Common\Vendor\imgui\imgui_impl_glfw_gl3.cpp" />
     <ClCompile Include="Common\Vendor\imgui\main.cpp" />
     <ClCompile Include="Common\OpenGLUtilities\ComputeShader\ComputeShader.cpp" />
+    <ClCompile Include="Common\Vendor\stb_image\stb_image.cpp" />
     <ClCompile Include="Game\Managers\DataTransferManager\DataTransferManager.cpp" />
     <ClCompile Include="Game\Managers\RenderManager\RenderUtils\RenderUtils.cpp" />
     <ClCompile Include="Game\Terrain\Globe\Globe.cpp" />
+    <ClCompile Include="Game\Terrain\Ground\Ground.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Game\Managers\RenderManager\RenderManager.cpp" />
     <ClCompile Include="Game\Managers\SimulationManager\SimulationManager.cpp" />
-    <ClCompile Include="TestBed.cpp" />
-    <ClCompile Include="Game\Trajectory\TrajectoryManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\ChunkManager\ChunkManager.h" />
@@ -173,6 +176,7 @@
     <ClInclude Include="Common\ModelLoading\ModelManager\ModelManager.h" />
     <ClInclude Include="Common\OpenGLUtilities\LineRenderer.h" />
     <ClInclude Include="Common\OpenGLUtilities\LineRenderer\LineRenderer.h" />
+    <ClInclude Include="Common\OpenGLUtilities\Skybox\Skybox.h" />
     <ClInclude Include="Common\OpenGLUtilities\UniveralStructs.h" />
     <ClInclude Include="Common\SphereGeneration\SphereGeneration.h" />
     <ClInclude Include="Common\Units\Coordinates\Coordinates.h" />
@@ -182,6 +186,7 @@
     <ClInclude Include="Common\Utilities\DoubleBuffer\DoubleBuffer.h" />
     <ClInclude Include="Common\Utilities\LockFreeMap\LockFreeMap.h" />
     <ClInclude Include="Common\Utilities\OrbitalCalculation\SphericalOrbit\SphericalOrbitCalculator.h" />
+    <ClInclude Include="Common\Utilities\PerlinNoise\PerlinNoise.h" />
     <ClInclude Include="Common\Utilities\ThreadPool\ThreadPool.h" />
     <ClInclude Include="Common\Utilities\ThreadWrapper\ThreadWrapper.h" />
     <ClInclude Include="Common\Vendor\assimp\aabb.h" />
@@ -411,7 +416,6 @@
     <ClInclude Include="Common\Vendor\glm\vec3.hpp" />
     <ClInclude Include="Common\Vendor\glm\vec4.hpp" />
     <ClInclude Include="Common\Vendor\glm\vector_relational.hpp" />
-    <ClInclude Include="Common\Clock\GameClock.h" />
     <ClInclude Include="Common\Stopwatch\Stopwatch.h" />
     <ClInclude Include="Common\Vendor\imgui\imconfig.h" />
     <ClInclude Include="Common\Vendor\imgui\imgui.h" />
@@ -420,6 +424,7 @@
     <ClInclude Include="Common\Vendor\imgui\stb_rect_pack.h" />
     <ClInclude Include="Common\Vendor\imgui\stb_textedit.h" />
     <ClInclude Include="Common\Vendor\imgui\stb_truetype.h" />
+    <ClInclude Include="Common\Vendor\stb_image\stb_image.h" />
     <ClInclude Include="Common\WorldInteraction\CommonDataStrutures\CommonDataStructures.h" />
     <ClInclude Include="Common\WorldInteraction\WorldInteraction.h" />
     <ClInclude Include="Common\OpenGLUtilities\ComputeShader\ComputeShader.h" />
@@ -430,8 +435,7 @@
     <ClInclude Include="Game\Managers\RenderManager\RenderManager.h" />
     <ClInclude Include="Game\Managers\SimulationManager\SimulationManager.h" />
     <ClInclude Include="Game\Terrain\Globe\GlobeGui\GlobeGui.h" />
-    <ClInclude Include="TestBed.h" />
-    <ClInclude Include="Game\Trajectory\TrajectoryManager.h" />
+    <ClInclude Include="Game\Terrain\Ground\Ground.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Common\Vendor\assimp\color4.inl" />
@@ -553,6 +557,14 @@
     <None Include="Common\Vendor\glm\gtx\vector_angle.inl" />
     <None Include="Common\Vendor\glm\gtx\vector_query.inl" />
     <None Include="Common\Vendor\glm\gtx\wrap.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\Skybox\Skybox1\back.png" />
+    <Image Include="Resources\Skybox\Skybox1\bottom.png" />
+    <Image Include="Resources\Skybox\Skybox1\front.png" />
+    <Image Include="Resources\Skybox\Skybox1\left.png" />
+    <Image Include="Resources\Skybox\Skybox1\right.png" />
+    <Image Include="Resources\Skybox\Skybox1\top.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

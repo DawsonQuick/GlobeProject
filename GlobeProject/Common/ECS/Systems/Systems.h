@@ -48,7 +48,7 @@ struct OrbitData {
 
 struct PositionData {
     vec3 position;
-    float padding;
+    float scale;
     ivec3 chunk;
     float padding2;
 };
@@ -99,19 +99,23 @@ void main() {
     positions[idx].chunk = ivec3(customRound(newPosition.x/chunkSize),customRound(newPosition.y/chunkSize),customRound(newPosition.z/chunkSize));
     BoundingBoxData bbox = bb[idx];
 
-    bbox.RBB = newPosition + vec3(100.0, -100.0, -100.0);
-    bbox.RBT = newPosition + vec3(100.0, 100.0, -100.0);
-    bbox.RFT = newPosition + vec3(100.0, 100.0, 100.0);
-    bbox.RFB = newPosition + vec3(100.0, -100.0, 100.0);
-    bbox.LBB = newPosition + vec3(-100.0, -100.0, -100.0);
-    bbox.LBT = newPosition + vec3(-100.0, 100.0, -100.0);
-    bbox.LFT = newPosition + vec3(-100.0, 100.0, 100.0);
-    bbox.LFB = newPosition + vec3(-100.0, -100.0, 100.0);
+    float scale = positions[idx].scale/2;
+    bbox.RBB = newPosition + vec3(scale, -scale, -scale);
+    bbox.RBT = newPosition + vec3(scale, scale, -scale);
+    bbox.RFT = newPosition + vec3(scale, scale, scale);
+    bbox.RFB = newPosition + vec3(scale, -scale, scale);
+    bbox.LBB = newPosition + vec3(-scale, -scale, -scale);
+    bbox.LBT = newPosition + vec3(-scale, scale, -scale);
+    bbox.LFT = newPosition + vec3(-scale, scale, scale);
+    bbox.LFB = newPosition + vec3(-scale, -scale, scale);
 
     vec3 color = bb[idx].Color;
 
     bbox.Color = color;
     bb[idx] = bbox;
+
+    for(int i; i < 2000; i++){
+    }
 }
 
 

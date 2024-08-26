@@ -5,8 +5,8 @@
 // GLFW
 #include <GLFW/glfw3.h>
 #include <thread>
+#include <sstream>
 #include "./../../Terrain/Globe/Globe.h"
-#include "./../../Trajectory/TrajectoryManager.h"
 #include "./../../MainImGuiComponents/MainImGuiRender.h"
 #include "./../../../Common/Vendor/imgui/imgui.h"
 #include "./../../../Common/Vendor/imgui/imgui_impl_glfw_gl3.h"
@@ -19,6 +19,10 @@
 
 #include "./../../../Common/Camera/Camera.h"
 #include "./../../../Common/OpenGLUtilities/LineRenderer/LineRenderer.h"
+#include "./../../../Common/OpenGLUtilities/Skybox/Skybox.h"
+
+#include "./../../../Common/ChunkManager/ChunkManager.h"
+#include "./../../../Common/ECS/Entity.h"
 #include "./../DataTransferManager/DataTransferManager.h"
 #include "./RenderUtils/RenderUtils.h"
 class RenderManager

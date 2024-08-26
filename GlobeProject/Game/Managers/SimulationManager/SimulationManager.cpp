@@ -28,7 +28,7 @@ void SimulationManager::startSimulationThread() {
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_real_distribution<double> dis(25.0, 45.0);
-	std::uniform_real_distribution<double> dis2(7000.0, 20000.0);
+	std::uniform_real_distribution<double> dis2(20000.0, 45000.0);
 	std::uniform_real_distribution<float> colorDis(0.0, 1.0);
 
 	for (int i = 0; i < 10000; i++) {
@@ -41,6 +41,9 @@ void SimulationManager::startSimulationThread() {
 	}
 
 	while (true) {
+		if (dtMrg.terminationSignal()) {
+			break;
+		}
 		if (dtMrg.pauseSimulation()) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(50));
 		}

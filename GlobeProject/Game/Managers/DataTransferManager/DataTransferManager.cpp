@@ -17,3 +17,7 @@ bool& DataTransferManager::pauseSimulation() {
 	return pauseSimulationState;
 }
 
+bool& DataTransferManager::terminationSignal() {
+	return terminateSignal;
+}
+

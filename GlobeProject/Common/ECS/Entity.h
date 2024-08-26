@@ -18,6 +18,13 @@ namespace ECS {
 
 	};
 
+	inline void renderEntiryGui(entt::entity entity) {
+		registry.get<PositionComponent>(entity).guiRender();
+		registry.get<TransformComponent>(entity).guiRender();
+		registry.get<CircularOrbitComponent>(entity).guiRender();
+		registry.get<BoundingBoxComponent>(entity).guiRender();
+	}
+
 	class Entity {
 	private:
 		entt::entity entity;

@@ -21,7 +21,7 @@ struct OrbitData {
 };
 struct PositionData {
     glm::vec3 position; // 12 bytes
-    float padding;      // 4 bytes padding to align to 16 bytes
+    float scale;      // 4 bytes padding to align to 16 bytes
     glm::ivec3 chunk; // 12 bytes
     float padding2;      // 4 bytes padding to align to 16 bytes
 };
@@ -71,7 +71,7 @@ public:
     }
 
     void performOperations(entt::registry& registry, std::vector<RenderTransferData>& returnRenderData) {
-        auto view = registry.view<PositionComponent, CircularOrbitComponent, BoundingBoxComponent>();
+        auto view = registry.view<PositionComponent, CircularOrbitComponent, BoundingBoxComponent, TransformComponent>();
         size_t numberOfEntities = view.size_hint();
 
         if (prevNumOfEntries != numberOfEntities) {
@@ -105,8 +105,9 @@ public:
             auto& pos = view.get<PositionComponent>(entity);
             auto& orbit = view.get<CircularOrbitComponent>(entity);
             auto& bbox = view.get<BoundingBoxComponent>(entity);
+            auto& trans = view.get<TransformComponent>(entity);
 
-            positions[idx] = { pos.position, 0.0f , pos.chunk , 0.0f};
+            positions[idx] = { pos.position, trans.scale , pos.chunk , 0.0f};
             orbits[idx] = {
                 glm::vec4(
                     static_cast<float>(orbit.radius),

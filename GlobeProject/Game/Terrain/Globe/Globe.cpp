@@ -15,11 +15,20 @@ void Globe::generate() {
 
     stopWatch.start();
 
-    generateSphere(6378.1f, (18 * 4), (18 * 2), vertices, indices);
+    //generateSphere(6378.1f, (18 * 4), (18 * 2), vertices, indices);
+    generateSpherifiedCubeSphere(6378.1f, (18 * 4), vertices, indices);
 
     std::cout << "Verticies: " << vertices.size() << std::endl;
     std::cout << "Indices: " << indices.size() << std::endl;
     m_boundingBox = calculateBoundingBox(vertices, size_t(8),size_t(3));
+
+    int tempChunkSize = ChunkManager::getChunkSize();
+    for (int i = 0; i < vertices.size(); i += 8) {
+        glm::vec3 tmpPoint = glm::vec3(vertices.at(i + 0), vertices.at(i + 1), vertices.at(i + 2));
+        glm::ivec3 tempChunk = glm::ivec3(std::floor((tmpPoint.x / tempChunkSize) + 0.5), std::floor((tmpPoint.y / tempChunkSize) + 0.5), std::floor((tmpPoint.z / tempChunkSize) + 0.5));
+        ChunkManager::addTerrainPointToChunk(tempChunk, tmpPoint);
+    }
+
     stopWatch.stop();
 
     glGenVertexArrays(1, &VAO);
@@ -51,9 +60,13 @@ void Globe::generate() {
     // Shader uniforms
     glUseProgram(shaderProgram);
 
+    indiceSize = indices.size();
 
+    vertices.clear();
+    indices.clear();
 
-
+    std::vector<float>().swap(vertices);
+    std::vector<unsigned int>().swap(indices);
 }
 void Globe::render(glm::mat4 model, glm::mat4 view, glm::mat4 projection, glm::vec3 viewPos) {
     glUseProgram(shaderProgram);
@@ -72,7 +85,7 @@ void Globe::render(glm::mat4 model, glm::mat4 view, glm::mat4 projection, glm::v
     glUniform3fv(glGetUniformLocation(shaderProgram, "viewPos"), 1, glm::value_ptr(viewPos));
 
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, indiceSize, GL_UNSIGNED_INT, 0);
 
     globeGuiRender(globeProperties);
 

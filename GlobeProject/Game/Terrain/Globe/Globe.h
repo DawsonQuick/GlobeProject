@@ -9,6 +9,7 @@
 #include "./../../../Common/Vendor/glm/gtc/matrix_transform.hpp"
 #include "./../../../Common/Vendor/glm/gtc/type_ptr.hpp"
 #include "./../../../Common/ModelLoading/BoundingBox/BoundingBoxGeneration.h"
+#include "./../../../Common/ChunkManager/ChunkManager.h"
 
 struct GlobeRenderProperties {
     glm::vec3 lightPos;
@@ -36,6 +37,9 @@ private:
     unsigned int shaderProgram;
     std::vector<float> vertices;
     std::vector<unsigned int> indices;
+
+    int indiceSize;
+
     Stopwatch<std::chrono::milliseconds> stopWatch;
     GlobeRenderProperties globeProperties;
     BoundingBox m_boundingBox;
@@ -56,6 +60,7 @@ uniform mat4 projection;
 out vec3 FragPos;
 out vec3 Normal;
 out vec2 TexCoords;
+out vec3 ViewPos; // Pass the view position to fragment shader
 
 void main()
 {
@@ -63,6 +68,8 @@ void main()
     Normal = mat3(transpose(inverse(model))) * aNormal;
     TexCoords = aTexCoords;
     gl_Position = projection * view * vec4(FragPos, 1.0);
+    // Pass the view position (camera position) in world space
+    ViewPos = vec3(view[3]);
 }
 )";
 
@@ -73,6 +80,7 @@ out vec4 FragColor;
 in vec3 FragPos;
 in vec3 Normal;
 in vec2 TexCoords;
+in vec3 ViewPos; // Received from vertex shader
 
 uniform vec3 lightPos;
 uniform vec3 viewPos;

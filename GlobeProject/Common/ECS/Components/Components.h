@@ -6,7 +6,13 @@
 #include "./../../Vendor/glm/glm.hpp"
 #include "./../../Vendor/glm/gtc/matrix_transform.hpp"
 #include "./../../Utilities/OrbitalCalculation/SphericalOrbit/SphericalOrbitCalculator.h"
-struct PositionComponent {
+#include "./../../Vendor/imgui/imgui.h"
+
+struct IRenderable {
+    virtual void guiRender() = 0; // Pure virtual function
+};
+
+struct PositionComponent : public IRenderable {
     glm::vec3 position;
     glm::ivec3 chunk;
 
@@ -22,25 +28,30 @@ struct PositionComponent {
     void updateChunk(const glm::ivec3 &newChunk) {
         chunk = newChunk;
     }
+
+    void guiRender() override {
+        ImGui::Text("Entity Postion: x:%.3f , y:%.3f , z:%.3f", position.x, position.y, position.z);
+    }
+
 };
 
 struct VelocityComponent {
     glm::vec3 velocity;
-
     VelocityComponent() = default;
     VelocityComponent(const VelocityComponent&) = default;
     VelocityComponent(const glm::vec3& newVelocity)
         :velocity(newVelocity) {}
 };
 
-struct TransformComponent {
+struct TransformComponent : public IRenderable {
     glm::mat4 transform;
-
+    float scale;
     TransformComponent() = default;
     TransformComponent(const TransformComponent&) = default;
     TransformComponent(const glm::mat4& newTransform)
         :transform(newTransform) {
-        transform = glm::scale(transform, glm::vec3(100));
+        scale = 300;
+        transform = glm::scale(transform, glm::vec3(scale));
     }
 
 
@@ -52,13 +63,26 @@ struct TransformComponent {
         return transform;
     }
 
-     const glm::mat4& updateScale(const glm::vec3& scale) {
-        transform = glm::scale(transform, scale);
-        return transform;
-    }
+     void guiRender() override {
+         if (ImGui::TreeNode("Entity Transform Matrix")) {
+             for (int row = 0; row < 4; ++row) {
+                 ImGui::Text("Row %d: %.3f, %.3f, %.3f, %.3f",
+                     row + 1,
+                     transform[row][0], transform[row][1], transform[row][2], transform[row][3]);
+             }
+             if (ImGui::DragFloat("Scale", &scale, 1.0f)) {
+                 transform[0][0] = scale;
+                 transform[1][1] = scale;
+                 transform[2][2] = scale;
+             }
+
+
+             ImGui::TreePop();
+         }
+     }
 };
 
-struct BoundingBoxComponent {
+struct BoundingBoxComponent : public IRenderable {
     glm::vec3 RBB;
     glm::vec3 RBT;
     glm::vec3 RFT;
@@ -111,6 +135,23 @@ struct BoundingBoxComponent {
           initialLBB(lbb), initialLBT(lbt), initialLFT(lft), initialLFB(lfb),
           dataGenerated(false) {}
 
+
+    void guiRender() override {
+        if (ImGui::TreeNode("Entity Bounding Box Info")) {
+            // Convert glm::vec3 to ImVec4 (ImGui's color type)
+            ImVec4 colorVec4(Color.r, Color.g, Color.b, 1.0f);
+
+            // Use ImGui::ColorEdit3 to display a color picker
+            if (ImGui::ColorEdit3("Color", (float*)&colorVec4)) {
+                // Update glm::vec3 with the new color values
+                Color.r = colorVec4.x;
+                Color.g = colorVec4.y;
+                Color.b = colorVec4.z;
+            }
+            ImGui::TreePop();
+        }
+    }
+
 private:
     glm::vec3 initialRBB, initialRBT, initialRFT, initialRFB;
     glm::vec3 initialLBB, initialLBT, initialLFT, initialLFB;
@@ -126,31 +167,13 @@ struct MeshComponent {
 	MeshComponent(const std::vector<float> verticies, const std::vector<unsigned int> indicies)
 		:verticies(verticies), indicies(indicies) {}
 };
-
-struct LineComponent {
-	std::vector<float> verticies;
-
-	LineComponent() = default;
-	LineComponent(const LineComponent&) = default;
-	LineComponent(const std::vector<float> verticies)
-		:verticies(verticies){}
-};
-
-struct RayComponent {
-    glm::vec3 origin;
-    glm::vec3 direction;
-    glm::vec3 end;
-
-	RayComponent() = default;
-	RayComponent(const RayComponent&) = default;
-	RayComponent(const glm::vec3 origin , const glm::vec3 direction, const glm::vec3 end)
-		:origin(origin), direction(direction) , end(end) {}
-};
-
-struct CircularOrbitComponent {
+struct CircularOrbitComponent : public IRenderable {
     double radius;
+    float tempRadius = static_cast<float>(radius);
     double inclination;
+    float tempInclination = static_cast<float>(inclination);
     double omega;
+    float tempOmega = static_cast<float>(omega);
     double period;
 
     glm::vec3 getCurrentOrbitPosition() const {
@@ -163,6 +186,24 @@ struct CircularOrbitComponent {
     CircularOrbitComponent(double radius, double inclination, double omega)
         : radius(radius), inclination(inclination), omega(omega) {
         period = (orbitalPeriod(6.67430e-11, 5.972e24, radius) * 100000);
+    }
+
+    void guiRender() override {
+        if (ImGui::TreeNode("Entity Orbital Information")) {
+            if (ImGui::DragFloat("Radius", &tempRadius, 1.0f)) {
+                radius = static_cast<double>(tempRadius);
+                // This block will be executed if the slider changes the value of myFloat
+                period = (orbitalPeriod(6.67430e-11, 5.972e24, radius) * 100000);
+            }
+            if(ImGui::DragFloat("Inclination", &tempInclination,0.01,0.0, 6.283)) {
+                inclination = static_cast<double>(tempInclination);
+            }
+            if (ImGui::DragFloat("Omega", &tempOmega, 0.01, 0.0, 6.283)) {
+                omega = static_cast<double>(tempOmega);
+            }
+            ImGui::Text("Period: %.3f", period);
+            ImGui::TreePop();
+        }
     }
 };
 

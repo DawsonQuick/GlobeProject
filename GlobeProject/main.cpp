@@ -7,8 +7,6 @@
 
 /*
 * Starting point for the program
-* TODO: 
-*   Implement bindless textures , and batch all the verticies together for all the different models , then 
 */
 int main() {
 

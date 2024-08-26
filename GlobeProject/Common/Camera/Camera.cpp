@@ -1,3 +1,6 @@
+#pragma optimize("", off)  // Disable optimizations for the Camera class
+
+
 #include "Camera.h"
 #include "./../Vendor/imgui/imgui.h"
 
@@ -206,8 +209,11 @@ void Camera::calculateRay(double mouseX, double mouseY, int screenWidth, int scr
 
     ray.lineVertices = rayLine;
     ray.end = glm::vec3(finalX, finalY, finalZ);
+
+    ChunkManager::findRayIntersectEntity(ray);
     m_CameraInfo.isRaySet = true;
     m_CameraInfo.ray = ray;
 }
 
 
+#pragma optimize("", on)  // Re-enable optimizations for the rest of the code

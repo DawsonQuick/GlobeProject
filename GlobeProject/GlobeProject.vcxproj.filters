@@ -3,8 +3,6 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Common\Camera\Camera.cpp" />
-    <ClCompile Include="Common\Clock\GameClock.cpp" />
-    <ClCompile Include="TestBed.cpp" />
     <ClCompile Include="Common\Vendor\imgui\imgui.cpp" />
     <ClCompile Include="Common\Vendor\imgui\imgui_demo.cpp" />
     <ClCompile Include="Common\Vendor\imgui\imgui_draw.cpp" />
@@ -14,7 +12,6 @@
     <ClCompile Include="Game\Managers\RenderManager\RenderManager.cpp" />
     <ClCompile Include="Game\Managers\SimulationManager\SimulationManager.cpp" />
     <ClCompile Include="Game\Managers\DataTransferManager\DataTransferManager.cpp" />
-    <ClCompile Include="Game\Trajectory\TrajectoryManager.cpp" />
     <ClCompile Include="Common\ModelLoading\AssimpLoader\AssimpLoader.cpp" />
     <ClCompile Include="Common\ModelLoading\ModelManager\ModelManager.cpp" />
     <ClCompile Include="Common\ECS\Systems\ECSRegistry\Registry.cpp" />
@@ -23,6 +20,10 @@
     <ClCompile Include="Common\OpenGLUtilities\LineRenderer\LineRenderer.cpp" />
     <ClCompile Include="Game\Managers\RenderManager\RenderUtils\RenderUtils.cpp" />
     <ClCompile Include="Common\ChunkManager\ChunkManager.cpp" />
+    <ClCompile Include="Common\Utilities\PerlinNoise\PerlinNoise.cpp" />
+    <ClCompile Include="Game\Terrain\Ground\Ground.cpp" />
+    <ClCompile Include="Common\OpenGLUtilities\Skybox\Skybox.cpp" />
+    <ClCompile Include="Common\Vendor\stb_image\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Common">
@@ -178,7 +179,6 @@
     <ClInclude Include="Common\Vendor\glm\vec4.hpp" />
     <ClInclude Include="Common\Vendor\glm\vector_relational.hpp" />
     <ClInclude Include="Common\Camera\Camera.h" />
-    <ClInclude Include="Common\Clock\GameClock.h" />
     <ClInclude Include="Common\Units\Distance\Metric\MetricDistance.h" />
     <ClInclude Include="Common\Units\Time\Time.h" />
     <ClInclude Include="Common\Units\Coordinates\Coordinates.h" />
@@ -186,7 +186,6 @@
     <ClInclude Include="Common\Units\Speed\Speed.h" />
     <ClInclude Include="Common\Utilities\DoubleBuffer\DoubleBuffer.h" />
     <ClInclude Include="Common\Utilities\ThreadWrapper\ThreadWrapper.h" />
-    <ClInclude Include="TestBed.h" />
     <ClInclude Include="Common\SphereGeneration\SphereGeneration.h" />
     <ClInclude Include="Common\Vendor\imgui\imconfig.h" />
     <ClInclude Include="Common\Vendor\imgui\imgui.h" />
@@ -203,7 +202,6 @@
     <ClInclude Include="Common\Utilities\LockFreeMap\LockFreeMap.h" />
     <ClInclude Include="Game\Terrain\Globe\GlobeGui\GlobeGui.h" />
     <ClInclude Include="Common\Utilities\OrbitalCalculation\SphericalOrbit\SphericalOrbitCalculator.h" />
-    <ClInclude Include="Game\Trajectory\TrajectoryManager.h" />
     <ClInclude Include="Common\OpenGLUtilities\LineRenderer.h" />
     <ClInclude Include="Common\Vendor\assimp\Compiler\poppack1.h" />
     <ClInclude Include="Common\Vendor\assimp\Compiler\pstdint.h" />
@@ -304,6 +302,10 @@
     <ClInclude Include="Game\Managers\RenderManager\RenderUtils\RenderUtils.h" />
     <ClInclude Include="Common\OpenGLUtilities\UniveralStructs.h" />
     <ClInclude Include="Common\ChunkManager\ChunkManager.h" />
+    <ClInclude Include="Common\Utilities\PerlinNoise\PerlinNoise.h" />
+    <ClInclude Include="Game\Terrain\Ground\Ground.h" />
+    <ClInclude Include="Common\OpenGLUtilities\Skybox\Skybox.h" />
+    <ClInclude Include="Common\Vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Common\Vendor\glm\detail\func_common.inl" />
@@ -425,5 +427,13 @@
     <None Include="Common\Vendor\assimp\SmoothingGroups.inl" />
     <None Include="Common\Vendor\assimp\vector2.inl" />
     <None Include="Common\Vendor\assimp\vector3.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\Skybox\Skybox1\back.png" />
+    <Image Include="Resources\Skybox\Skybox1\bottom.png" />
+    <Image Include="Resources\Skybox\Skybox1\front.png" />
+    <Image Include="Resources\Skybox\Skybox1\left.png" />
+    <Image Include="Resources\Skybox\Skybox1\right.png" />
+    <Image Include="Resources\Skybox\Skybox1\top.png" />
   </ItemGroup>
 </Project>

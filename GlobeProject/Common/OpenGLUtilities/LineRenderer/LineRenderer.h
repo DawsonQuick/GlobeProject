@@ -13,11 +13,11 @@ public:
     ~LineRenderer();
 
     void render(glm::mat4 model, glm::mat4 view, glm::mat4 projection);
-    void appendLines(std::vector<float>& newLines);
+    void appendLines(std::vector<float>& newLines, bool forceRefresh);
     void setColor(glm::vec3 newColor);
 private:
     void initSSBO(size_t initialSize);
-    void updateSSBO(const std::vector<float>& newLines);
+    void updateSSBO(const std::vector<float>& newLines, bool forceUpdate);
 
     unsigned int VAO, VBO, shaderProgram;
 
