@@ -5,7 +5,7 @@ DataTransferManager& DataTransferManager::getInstance() {
 	return instance;
 }
 
-std::shared_ptr<DoubleBuffer<RenderTransferData>> DataTransferManager::getDoubleBuffer(DataTransferTypes key) {
+std::shared_ptr<DoubleBuffer<RenderTransferDataTemp>> DataTransferManager::getDoubleBuffer(DataTransferTypes key) {
 	return doubleBufferMap.get(key);
 }
 

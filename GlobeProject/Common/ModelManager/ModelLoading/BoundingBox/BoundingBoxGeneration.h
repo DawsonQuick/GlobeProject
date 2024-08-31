@@ -2,13 +2,12 @@
 #ifndef BOUNDINGBOXGENERATOR_H
 #define BOUNDINGBOXGENERATOR_H
 
-#include "./../../OpenGLUtilities/LineRenderer/LineRenderer.h"
-#include "./../../Vendor/glm/glm.hpp"
+#include "./../../../../Common/Vendor/glm/glm.hpp"
 #include "./../AssimpLoader/AssimpLoader.h"
-#include "./../../WorldInteraction/WorldInteraction.h"
+#include "./../../../ECS/Entity.h"
 #include <vector>
 
-inline std::vector<float> generateEdges(const BoundingBox& bbox) {
+inline std::vector<float> generateEdges(const BoundingBoxComponent& bbox) {
     std::vector<float> edges;
 
     auto addEdge = [&](const glm::vec3& start, const glm::vec3& end) {
@@ -35,8 +34,8 @@ inline std::vector<float> generateEdges(const BoundingBox& bbox) {
     return edges;
 }
 
-inline BoundingBox calculateBoundingBox(const std::vector<Vertex>& tmpVertices) {
-    BoundingBox newBoundingBox;
+inline BoundingBoxComponent calculateBoundingBox(const std::vector<Vertex>& tmpVertices) {
+    BoundingBoxComponent newBoundingBox;
     bool firstPass = true;
     float minX = 0.0f;
     float maxX = 0.0f;
@@ -44,7 +43,7 @@ inline BoundingBox calculateBoundingBox(const std::vector<Vertex>& tmpVertices) 
     float maxY = 0.0f;
     float minZ = 0.0f;
     float maxZ = 0.0f;
-
+    float scale = 1.0;
     for (const Vertex& vertex : tmpVertices) {
         if (firstPass) {
             firstPass = false;
@@ -76,21 +75,19 @@ inline BoundingBox calculateBoundingBox(const std::vector<Vertex>& tmpVertices) 
         }
     }
 
-    newBoundingBox.RBB = glm::vec3(maxX, minY, minZ);
-    newBoundingBox.RBT = glm::vec3(maxX, maxY, minZ);
-    newBoundingBox.RFT = glm::vec3(maxX, maxY, maxZ);
-    newBoundingBox.RFB = glm::vec3(maxX, minY, maxZ);
-    newBoundingBox.LBB = glm::vec3(minX, minY, minZ);
-    newBoundingBox.LBT = glm::vec3(minX, maxY, minZ);
-    newBoundingBox.LFT = glm::vec3(minX, maxY, maxZ);
-    newBoundingBox.LFB = glm::vec3(minX, minY, maxZ);
-
-    newBoundingBox.renderLines = generateEdges(newBoundingBox);
-    newBoundingBox.isBoundingBoxSet = true;
+    newBoundingBox.RBB = glm::vec3(maxX, minY, minZ) * scale;
+    newBoundingBox.RBT = glm::vec3(maxX, maxY, minZ) * scale;
+    newBoundingBox.RFT = glm::vec3(maxX, maxY, maxZ) * scale;
+    newBoundingBox.RFB = glm::vec3(maxX, minY, maxZ) * scale;
+    newBoundingBox.LBB = glm::vec3(minX, minY, minZ) * scale;
+    newBoundingBox.LBT = glm::vec3(minX, maxY, minZ) * scale;
+    newBoundingBox.LFT = glm::vec3(minX, maxY, maxZ) * scale;
+    newBoundingBox.LFB = glm::vec3(minX, minY, maxZ) * scale;
+ 
     return newBoundingBox;
 }
 
-inline BoundingBox calculateBoundingBox(const std::vector<float>& vertices, size_t setSize = 8, size_t valuesToExtract = 3) {
+inline BoundingBoxComponent calculateBoundingBox(const std::vector<float>& vertices, size_t setSize = 8, size_t valuesToExtract = 3) {
     // Ensure the input vector size is a multiple of the set size
     if (vertices.size() % setSize != 0) {
         throw std::runtime_error("Input vector size must be a multiple of the set size.");

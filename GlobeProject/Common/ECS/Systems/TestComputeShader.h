@@ -23,29 +23,8 @@ struct PositionData {
     glm::vec3 position; // 12 bytes
     float scale;      // 4 bytes padding to align to 16 bytes
     glm::ivec3 chunk; // 12 bytes
-    float padding2;      // 4 bytes padding to align to 16 bytes
+    float doRender;      // 4 bytes padding to align to 16 bytes
 };
-struct BoundingBoxData {
-    glm::vec3 RBB;
-    float padding1;
-    glm::vec3 RBT;
-    float padding2;
-    glm::vec3 RFT;
-    float padding3;
-    glm::vec3 RFB;
-    float padding4;
-    glm::vec3 LBB;
-    float padding5;
-    glm::vec3 LBT;
-    float padding6;
-    glm::vec3 LFT;
-    float padding7;
-    glm::vec3 LFB;
-    float padding8;
-    glm::vec3 Color;
-    float padding9;
-};
-
 
 class ComputeShader {
 public:
@@ -59,7 +38,6 @@ public:
 
         glGenBuffers(1, &positionBuffer);
         glGenBuffers(1, &orbitBuffer);
-        glGenBuffers(1, &boundingBoxBuffer);
     }
 
     ~ComputeShader() {
@@ -67,10 +45,9 @@ public:
 
         glDeleteBuffers(1, &positionBuffer);
         glDeleteBuffers(1, &orbitBuffer);
-        glDeleteBuffers(1, &boundingBoxBuffer);
     }
 
-    void performOperations(entt::registry& registry, std::vector<RenderTransferData>& returnRenderData) {
+    void performOperations(entt::registry& registry, std::vector<RenderTransferDataTemp>& returnRenderData) {
         auto view = registry.view<PositionComponent, CircularOrbitComponent, BoundingBoxComponent, TransformComponent>();
         size_t numberOfEntities = view.size_hint();
 
@@ -79,8 +56,6 @@ public:
             positions.resize(numberOfEntities);
             orbits.reserve(numberOfEntities);
             orbits.resize(numberOfEntities);
-            boundingBoxs.reserve(numberOfEntities);
-            boundingBoxs.resize(numberOfEntities);
             prevNumOfEntries = numberOfEntities;
 
 
@@ -90,9 +65,6 @@ public:
 
             glBindBuffer(GL_SHADER_STORAGE_BUFFER, orbitBuffer);
             glBufferData(GL_SHADER_STORAGE_BUFFER, numberOfEntities * sizeof(OrbitData), nullptr, GL_DYNAMIC_DRAW);
-
-            glBindBuffer(GL_SHADER_STORAGE_BUFFER, boundingBoxBuffer);
-            glBufferData(GL_SHADER_STORAGE_BUFFER, numberOfEntities * sizeof(BoundingBoxData), nullptr, GL_DYNAMIC_DRAW);
         }
 
         auto now = std::chrono::system_clock::now();
@@ -117,7 +89,6 @@ public:
                 ),
                 static_cast<float>(fmod(seconds, orbit.period))
             };
-            boundingBoxs[idx].Color = bbox.Color;
             ++idx;
         }
         
@@ -136,17 +107,9 @@ public:
             glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
         }
 
-        glBindBuffer(GL_SHADER_STORAGE_BUFFER, boundingBoxBuffer);
-        void* ptrBB = glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_WRITE_ONLY);
-        if (ptrBB) {
-            std::memcpy(ptrBB, boundingBoxs.data(), numberOfEntities * sizeof(BoundingBoxData));
-            glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
-        }
-
         if (isNotBound){
             glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, positionBuffer);
             glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, orbitBuffer);
-            glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, boundingBoxBuffer);
             isNotBound = false;
         }
         dispatchComputeShader(numberOfEntities);
@@ -155,14 +118,13 @@ public:
 
 private:
     GLuint shaderProgram;
-    unsigned int positionBuffer, orbitBuffer, boundingBoxBuffer;
+    unsigned int positionBuffer, orbitBuffer;
     std::chrono::high_resolution_clock::time_point last_Sample_Time = std::chrono::high_resolution_clock::now();
     Stopwatch<std::chrono::milliseconds> sw;
     bool isNotBound = true;
 
     std::vector<PositionData> positions;
     std::vector<OrbitData> orbits;
-    std::vector<BoundingBoxData> boundingBoxs;
 
     size_t prevNumOfEntries = 0;
 
@@ -202,13 +164,16 @@ private:
     }
 
 
-    void updateBuffer(size_t numEntity , entt::registry& registry , std::vector<RenderTransferData>& returnRenderData) {
+    void updateBuffer(size_t numEntity , entt::registry& registry , std::vector<RenderTransferDataTemp>& returnRenderData) {
 
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, positionBuffer);
         glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, numEntity * sizeof(PositionData), positions.data());
-        glBindBuffer(GL_SHADER_STORAGE_BUFFER, boundingBoxBuffer);
-        glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, numEntity * sizeof(BoundingBoxData), boundingBoxs.data());
         
+        //---------------------------------------------------------------------------------------------------------------
+        std::map<int, int> modelIdToVectorPosition;
+        int index = 0;
+        //---------------------------------------------------------------------------------------------------------------
+
         auto view = registry.view<PositionComponent, CircularOrbitComponent, BoundingBoxComponent, TransformComponent>();
         size_t idx = 0;
         for (auto entity : view) {
@@ -217,7 +182,7 @@ private:
             auto& transformComp = view.get<TransformComponent>(entity);
 
             posComp.updatePos(positions[idx].position);
-            boxComp.update(boundingBoxs[idx].RBB, boundingBoxs[idx].RBT, boundingBoxs[idx].RFT, boundingBoxs[idx].RFB, boundingBoxs[idx].LBB, boundingBoxs[idx].LBT, boundingBoxs[idx].LFT, boundingBoxs[idx].LFB);
+            boxComp.update(positions[idx].position, positions[idx].scale);
 
             // Check for chunk changes and update ChunkManager accordingly
             if (posComp.chunk != positions[idx].chunk) {
@@ -230,9 +195,30 @@ private:
                 }
             }
 
+            if (positions[idx].doRender == 1.0f) {
+                //---------------------------------------------------------------------------------------------------------------
+                auto it = modelIdToVectorPosition.find(transformComp.modelId);
+                if (it != modelIdToVectorPosition.end()) {
+                    //Model is already loaded
+                    returnRenderData.at(it->second).instanceInformation.push_back(RenderTransferData(transformComp.updatePosition(positions[idx].position), boxComp.Color));
+                }
+                else {
+                    //Model has not been added to the vector so needs to be added  
+                    modelIdToVectorPosition[transformComp.modelId] = index;
+                    index++;
+                    RenderTransferDataTemp newModelEntry;
+                    newModelEntry.modelId = transformComp.modelId;
+                    std::vector<RenderTransferData> tempVector;
+                    tempVector.push_back(RenderTransferData(transformComp.updatePosition(positions[idx].position), boxComp.Color));
+                    newModelEntry.instanceInformation = tempVector;
+                    returnRenderData.push_back(newModelEntry);
+
+                }
+                //--------------------------------------------------------------------------------------------------------------
+            }
             posComp.chunk = positions[idx].chunk;
 
-            returnRenderData.push_back(RenderTransferData(transformComp.updatePosition(positions[idx].position), boundingBoxs[idx].Color));
+            //returnRenderData.push_back(RenderTransferData(transformComp.updatePosition(positions[idx].position), boxComp.Color));
             ++idx;
         }
     }
@@ -240,6 +226,10 @@ private:
         glUseProgram(shaderProgram);
 
         GLuint chunkSize = glGetUniformLocation(shaderProgram, "chunkSize");
+        GLuint cameraChunkPosition = glGetUniformLocation(shaderProgram,"currentCameraChunk");
+        glm::ivec3 currentCameraChunk = ChunkManager::getCurrentCameraChunk();
+        glUniform3i(cameraChunkPosition, currentCameraChunk.x, currentCameraChunk.y, currentCameraChunk.z);
+
         glUniform1i(chunkSize, ChunkManager::getChunkSize());
         GLuint numGroupsX = static_cast<GLuint>((numEntities + 255) / 256);
         glDispatchCompute(numGroupsX, 1, 1);

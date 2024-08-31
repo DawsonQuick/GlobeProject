@@ -2,6 +2,7 @@
 #include <iostream>
 #include <thread>
 #include <functional>
+#include "./../../Logger/Logger.h"
 
 class ThreadWrapper {
 public:
@@ -19,7 +20,7 @@ public:
             throw std::runtime_error("Thread is already running");
         }
         else {
-            std::cout << "Starting Thread" << std::endl;
+            LOG_MESSAGE(LogLevel::INFO, "Starting thread!");
         }
         thread = std::thread(std::forward<F>(f), std::forward<Args>(args)...);
         running = true;

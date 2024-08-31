@@ -10,6 +10,7 @@
 #include "./../../OpenGLUtilities/UniveralStructs.h"
 #include "./ECSRegistry/Registry.h"
 #include "TestComputeShader.h"
+#include "./../../../Game/Managers/DataTransferManager/DataTransferManager.h"
 namespace ECS {
 
 	inline const char* computeShaderSource = R"(
@@ -50,23 +51,8 @@ struct PositionData {
     vec3 position;
     float scale;
     ivec3 chunk;
-    float padding2;
+    float doRender;
 };
-
-struct BoundingBoxData {
-    vec3 RBB;
-    vec3 RBT;
-    vec3 RFT;
-    vec3 RFB;
-    vec3 LBB;
-    vec3 LBT;
-    vec3 LFT;
-    vec3 LFB;
-
-    vec3 Color;
-    float padding;
-};
-
 layout (local_size_x = 256) in;
 
 // Buffer bindings
@@ -78,11 +64,8 @@ layout (std430, binding = 1) buffer OrbitBuffer {
     OrbitData orbits[];
 };
 
-layout (std430, binding = 2) buffer BoundingBoxBuffer {
-    BoundingBoxData bb[];
-};
-
 uniform int chunkSize;
+uniform ivec3 currentCameraChunk;
 
 void main() {
     uint idx = gl_GlobalInvocationID.x;
@@ -97,40 +80,31 @@ void main() {
 
     positions[idx].position = newPosition;
     positions[idx].chunk = ivec3(customRound(newPosition.x/chunkSize),customRound(newPosition.y/chunkSize),customRound(newPosition.z/chunkSize));
-    BoundingBoxData bbox = bb[idx];
 
-    float scale = positions[idx].scale/2;
-    bbox.RBB = newPosition + vec3(scale, -scale, -scale);
-    bbox.RBT = newPosition + vec3(scale, scale, -scale);
-    bbox.RFT = newPosition + vec3(scale, scale, scale);
-    bbox.RFB = newPosition + vec3(scale, -scale, scale);
-    bbox.LBB = newPosition + vec3(-scale, -scale, -scale);
-    bbox.LBT = newPosition + vec3(-scale, scale, -scale);
-    bbox.LFT = newPosition + vec3(-scale, scale, scale);
-    bbox.LFB = newPosition + vec3(-scale, -scale, scale);
+    float dist = distance(vec3(positions[idx].chunk) , vec3(currentCameraChunk));
 
-    vec3 color = bb[idx].Color;
-
-    bbox.Color = color;
-    bb[idx] = bbox;
-
-    for(int i; i < 2000; i++){
+    if(dist > 100){
+        positions[idx].doRender = 0.0;
+    }else{
+        positions[idx].doRender = 1.0;
     }
+
 }
 
 
 )";
 	inline ComputeShader* computeShader = nullptr;
-    inline std::vector<RenderTransferData> boundingBoxRenderInfo;
+    inline std::vector<RenderTransferDataTemp> boundingBoxRenderInfo;
 	inline void initializeComputeShader() {
 		computeShader = new ComputeShader(computeShaderSource);
 	}
 
-    inline std::vector<RenderTransferData>& updateOrbitPositions() {
+    inline std::vector<RenderTransferDataTemp>& updateOrbitPositions() {
         boundingBoxRenderInfo.resize(0);
 		computeShader->performOperations(registry, boundingBoxRenderInfo);
         return boundingBoxRenderInfo;
 	}
+
 
 	inline std::vector<float> updateBoundingBoxes() {
 		auto view = registry.view<BoundingBoxComponent>();

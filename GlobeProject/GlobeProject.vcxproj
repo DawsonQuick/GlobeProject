@@ -141,9 +141,10 @@
   <ItemGroup>
     <ClCompile Include="Common\ChunkManager\ChunkManager.cpp" />
     <ClCompile Include="Common\ECS\Systems\ECSRegistry\Registry.cpp" />
-    <ClCompile Include="Common\ModelLoading\AssimpLoader\AssimpLoader.cpp" />
+    <ClCompile Include="Common\Logger\Logger.cpp" />
+    <ClCompile Include="Common\ModelManager\ModelLoading\AssimpLoader\AssimpLoader.cpp" />
     <ClCompile Include="Common\Camera\Camera.cpp" />
-    <ClCompile Include="Common\ModelLoading\ModelManager\ModelManager.cpp" />
+    <ClCompile Include="Common\ModelManager\ModelManager.cpp" />
     <ClCompile Include="Common\OpenGLUtilities\LineRenderer\LineRenderer.cpp" />
     <ClCompile Include="Common\OpenGLUtilities\Skybox\Skybox.cpp" />
     <ClCompile Include="Common\Utilities\PerlinNoise\PerlinNoise.cpp" />
@@ -156,6 +157,7 @@
     <ClCompile Include="Common\OpenGLUtilities\ComputeShader\ComputeShader.cpp" />
     <ClCompile Include="Common\Vendor\stb_image\stb_image.cpp" />
     <ClCompile Include="Game\Managers\DataTransferManager\DataTransferManager.cpp" />
+    <ClCompile Include="Game\Managers\RenderManager\InstancedRenderingOrchestrator\InstancedRenderingOrchestrator.cpp" />
     <ClCompile Include="Game\Managers\RenderManager\RenderUtils\RenderUtils.cpp" />
     <ClCompile Include="Game\Terrain\Globe\Globe.cpp" />
     <ClCompile Include="Game\Terrain\Ground\Ground.cpp" />
@@ -170,10 +172,11 @@
     <ClInclude Include="Common\ECS\Systems\ECSRegistry\Registry.h" />
     <ClInclude Include="Common\ECS\Systems\Systems.h" />
     <ClInclude Include="Common\ECS\Systems\TestComputeShader.h" />
-    <ClInclude Include="Common\ModelLoading\AssimpLoader\AssimpLoader.h" />
+    <ClInclude Include="Common\Logger\Logger.h" />
+    <ClInclude Include="Common\ModelManager\ModelLoading\AssimpLoader\AssimpLoader.h" />
     <ClInclude Include="Common\Camera\Camera.h" />
-    <ClInclude Include="Common\ModelLoading\BoundingBox\BoundingBoxGeneration.h" />
-    <ClInclude Include="Common\ModelLoading\ModelManager\ModelManager.h" />
+    <ClInclude Include="Common\ModelManager\ModelLoading\BoundingBox\BoundingBoxGeneration.h" />
+    <ClInclude Include="Common\ModelManager\ModelManager.h" />
     <ClInclude Include="Common\OpenGLUtilities\LineRenderer.h" />
     <ClInclude Include="Common\OpenGLUtilities\LineRenderer\LineRenderer.h" />
     <ClInclude Include="Common\OpenGLUtilities\Skybox\Skybox.h" />
@@ -183,6 +186,7 @@
     <ClInclude Include="Common\Units\Distance\Metric\MetricDistance.h" />
     <ClInclude Include="Common\Units\Speed\Speed.h" />
     <ClInclude Include="Common\Units\Time\Time.h" />
+    <ClInclude Include="Common\Utilities\CappedDeque\CappedDeque.h" />
     <ClInclude Include="Common\Utilities\DoubleBuffer\DoubleBuffer.h" />
     <ClInclude Include="Common\Utilities\LockFreeMap\LockFreeMap.h" />
     <ClInclude Include="Common\Utilities\OrbitalCalculation\SphericalOrbit\SphericalOrbitCalculator.h" />
@@ -430,6 +434,7 @@
     <ClInclude Include="Common\OpenGLUtilities\ComputeShader\ComputeShader.h" />
     <ClInclude Include="Game\Managers\DataTransferManager\DataTransferManager.h" />
     <ClInclude Include="Game\MainImGuiComponents\MainImGuiRender.h" />
+    <ClInclude Include="Game\Managers\RenderManager\InstancedRenderingOrchestrator\InstancedRenderingOrchestrator.h" />
     <ClInclude Include="Game\Managers\RenderManager\RenderUtils\RenderUtils.h" />
     <ClInclude Include="Game\Terrain\Globe\Globe.h" />
     <ClInclude Include="Game\Managers\RenderManager\RenderManager.h" />

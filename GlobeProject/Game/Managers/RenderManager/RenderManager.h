@@ -25,6 +25,7 @@
 #include "./../../../Common/ECS/Entity.h"
 #include "./../DataTransferManager/DataTransferManager.h"
 #include "./RenderUtils/RenderUtils.h"
+#include "./InstancedRenderingOrchestrator/InstancedRenderingOrchestrator.h"
 class RenderManager
 {
 

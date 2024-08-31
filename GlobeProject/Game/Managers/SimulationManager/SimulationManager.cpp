@@ -31,36 +31,64 @@ void SimulationManager::startSimulationThread() {
 	std::uniform_real_distribution<double> dis2(20000.0, 45000.0);
 	std::uniform_real_distribution<float> colorDis(0.0, 1.0);
 
-	for (int i = 0; i < 10000; i++) {
-		ECS::Entity entity = ECS::create();
-		entity.addComponent<PositionComponent>(glm::vec3(0.0f, 0.0f, 0.0f));
-		entity.addComponent<TransformComponent>(glm::mat4(1.0));
-		entity.addComponent<BoundingBoxComponent>(ECS::createBoundingBox(glm::vec3(colorDis(gen), colorDis(gen), colorDis(gen))));
-		//entity.addComponent<CircularOrbitComponent>(dis2(gen), dis(gen) * 3.1415 / 180, dis(gen) * 3.1415 / 180);
-		entity.addComponent<CircularOrbitComponent>(dis2(gen), dis(gen) * 3.1415 / 180, 45.0 * 3.1415 / 180);
+
+	/* --------------------------------------------------------------------------------------------------------------------------------------------------------
+	*																Temp code for generating models
+	   -------------------------------------------------------------------------------------------------------------------------------------------------------- */
+	
+	int totalSuccess = 0;
+	int totalFailed = 0;
+
+	for (int j = 0; j < 250; j++) {
+		std::vector<float> vertices;
+		std::vector<unsigned int> indices;
+		generateSpherifiedCubeSphere(300, (3 * 4), vertices, indices);
+		int id = ModelManager::loadModel(vertices, indices, "astroid"+std::to_string(j));
+
+		auto model2 = ModelManager::getModel(id);
+		if (!model2) {
+			totalFailed++;
+			return;
+		}
+		totalSuccess++;
+		for (int i = 0; i < 50; i++) {
+			ECS::Entity entity = ECS::create();
+			entity.addComponent<PositionComponent>(glm::vec3(0.0f, 0.0f, 0.0f));
+			entity.addComponent<TransformComponent>(glm::mat4(1.0),id);
+			entity.addComponent<BoundingBoxComponent>(ECS::createBoundingBox(ModelManager::getModel(id)->boundingBox, glm::vec3(colorDis(gen), colorDis(gen), colorDis(gen))));
+			//entity.addComponent<CircularOrbitComponent>(dis2(gen), dis(gen) * 3.1415 / 180, dis(gen) * 3.1415 / 180);
+			entity.addComponent<CircularOrbitComponent>(dis2(gen), dis(gen) * 3.1415 / 180, 45.0 * 3.1415 / 180);
+		}
+
 	}
+	
+	LOG_MESSAGE(LogLevel::INFO,"Total Success: " + std::to_string(totalSuccess));
+	LOG_MESSAGE(LogLevel::INFO,"Total Failed: " + std::to_string(totalFailed));
+	
+	/* --------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
 	while (true) {
+		//------------------------------------------------------------------
+		//   Conditional Checks before running the simulation loop
+		//------------------------------------------------------------------
 		if (dtMrg.terminationSignal()) {
 			break;
 		}
 		if (dtMrg.pauseSimulation()) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(50));
 		}
+		if (!(ECS::registry.storage<entt::entity>().in_use())) {
+			std::this_thread::sleep_for(std::chrono::milliseconds(50));
+		}
+		//------------------------------------------------------------------
+		//If all conditions are met, run the simulation loop
 		else {
 			stopWatch.start();
-			/*
-			auto currentTime = std::chrono::high_resolution_clock::now();
-			auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - prev_time).count();
-			float TS = static_cast<float>(elapsed_time) / 1000.0f;
-			prev_time = currentTime;
-			*/
-			//ECS::updatePositions(TS);
-
-			std::vector<RenderTransferData>& tmpBoundingBoxResults = ECS::updateOrbitPositions();
+			std::vector<RenderTransferDataTemp>& tmpBoundingBoxResults = ECS::updateOrbitPositions();
 			dtMrg.getDoubleBuffer(DataTransferTypes::TEST)->getInactiveBuffer()->assign(tmpBoundingBoxResults.begin(), tmpBoundingBoxResults.end());
 			dtMrg.getDoubleBuffer(DataTransferTypes::TEST)->swapBuffers();
 			dtMrg.getSimulationFrameRate() = stopWatch.stopReturn();
+			LOG_MESSAGE(LogLevel::DEBUG,"This is a stress test for logging");
 		}
 	}
 

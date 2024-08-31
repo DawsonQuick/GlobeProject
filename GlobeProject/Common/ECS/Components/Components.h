@@ -46,11 +46,13 @@ struct VelocityComponent {
 struct TransformComponent : public IRenderable {
     glm::mat4 transform;
     float scale;
+    int modelId;
+
     TransformComponent() = default;
     TransformComponent(const TransformComponent&) = default;
-    TransformComponent(const glm::mat4& newTransform)
-        :transform(newTransform) {
-        scale = 300;
+    TransformComponent(const glm::mat4& newTransform, int& modelId)
+        :transform(newTransform), modelId(modelId) {
+        scale = 1;
         transform = glm::scale(transform, glm::vec3(scale));
     }
 
@@ -96,22 +98,15 @@ struct BoundingBoxComponent : public IRenderable {
 
     std::vector<float> renderData;
 
-    void update(const glm::vec3& tmpRBB,
-        const glm::vec3& tmpRBT,
-        const glm::vec3& tmpRFT,
-        const glm::vec3& tmpRFB,
-        const glm::vec3& tmpLBB,
-        const glm::vec3& tmpLBT,
-        const glm::vec3& tmpLFT,
-        const glm::vec3& tmpLFB) {
-        RBB = tmpRBB;
-        RBT = tmpRBT;
-        RFT = tmpRFT;
-        RFB = tmpRFB;
-        LBB = tmpLBB;
-        LBT = tmpLBT;
-        LFT = tmpLFT;
-        LFB = tmpLFB;
+    void update(const glm::vec3& position, float scale) {
+        RBB = position + initialRBB * scale;
+        RBT = position + initialRBT * scale;
+        RFT = position + initialRFT * scale;
+        RFB = position + initialRFB * scale;
+        LBB = position + initialLBB * scale;
+        LBT = position + initialLBT * scale;
+        LFT = position + initialLFT * scale;
+        LFB = position + initialLFB * scale;
     }
 
     void setColor(const glm::vec3& color) {
@@ -126,7 +121,40 @@ struct BoundingBoxComponent : public IRenderable {
         renderData.assign(arr, arr + sizeof(arr) / sizeof(arr[0]));
     }
     BoundingBoxComponent() = default;
-    BoundingBoxComponent(const BoundingBoxComponent&) = default;
+
+    void printVec3(glm::vec3 vec) {
+        std::cout << vec.x << " " << vec.y << " " << vec.z << std::endl;
+    }
+
+    BoundingBoxComponent(const BoundingBoxComponent& copy , glm::vec3 color) {
+        //printVec3(copy.RBB);
+        //printVec3(copy.RBT);
+        //printVec3(copy.RFT);
+        //printVec3(copy.RFB);
+        //printVec3(copy.LBB);
+        //printVec3(copy.LBT);
+        //printVec3(copy.LFT);
+        //printVec3(copy.LFB);
+        RBB = copy.RBB;
+        RBT = copy.RBT;
+        RFT = copy.RFT;
+        RFB = copy.RFB;
+        LBB = copy.LBB;
+        LBT = copy.LBT;
+        LFT = copy.LFT;
+        LFB = copy.LFB;
+        initialRBB = copy.RBB;
+        initialRBT = copy.RBT;
+        initialRFT = copy.RFT;
+        initialRFB = copy.RFB;
+        initialLBB = copy.LBB;
+        initialLBT = copy.LBT;
+        initialLFT = copy.LFT;
+        initialLFB = copy.LFB;
+        dataGenerated = false;
+        Color = color;
+
+    };
     BoundingBoxComponent(const glm::vec3& rbb, const glm::vec3& rbt, const glm::vec3& rft, const glm::vec3& rfb,
                          const glm::vec3& lbb, const glm::vec3& lbt, const glm::vec3& lft, const glm::vec3& lfb,
                          const glm::vec3& color)
@@ -158,15 +186,6 @@ private:
     bool dataGenerated;
 };
 
-struct MeshComponent {
-	std::vector<float> verticies;
-	std::vector<unsigned int> indicies;
-
-	MeshComponent() = default;
-	MeshComponent(const MeshComponent&) = default;
-	MeshComponent(const std::vector<float> verticies, const std::vector<unsigned int> indicies)
-		:verticies(verticies), indicies(indicies) {}
-};
 struct CircularOrbitComponent : public IRenderable {
     double radius;
     float tempRadius = static_cast<float>(radius);

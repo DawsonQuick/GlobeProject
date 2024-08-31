@@ -1,6 +1,4 @@
 #pragma optimize("", off)  // Disable optimizations for the Camera class
-
-
 #include "Camera.h"
 #include "./../Vendor/imgui/imgui.h"
 
@@ -34,6 +32,8 @@ void Camera::update(GLFWwindow* window, float currentFrame) {
     if (m_Dragging || m_FirstMouse) {
         mouse_Dragcallback(mouseX, mouseY);
     }
+
+    ChunkManager::updateCameraPosition(m_CameraInfo.m_CameraPos);
     
 }
 
@@ -44,31 +44,48 @@ CameraInfo Camera::getCameraInfo() {
 //Presses keyboard inputs
 void Camera::processInput(GLFWwindow* window)
 {
+    static bool wasTabPressed = false; // Track previous state of Tab key
     static auto lastToggleTime = std::chrono::high_resolution_clock::now();
     auto currentTime = std::chrono::high_resolution_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastToggleTime);
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-        if (!m_Pressed) {
-            m_Pressed = true;
-            m_PressStartTime = std::chrono::high_resolution_clock::now();
-        }
-        if (m_Pressed) {
-            if ((std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_PressStartTime)) > std::chrono::milliseconds(15)) {
-                m_Dragging = true;
-            }
-        }
-    }
-    else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
-        m_Dragging = false;
-        m_FirstMouse = true; // Reset first mouse use
-        if (m_Pressed) {
-            m_Pressed = false;
-            if ((std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_PressStartTime)) < std::chrono::milliseconds(150)) {
-                calculateRay(m_LastX, m_LastY, m_WindowWidth, m_WindowHeight);
-            }
-        }
 
+    //Disable this callback if interacting with a ImGUI element
+    if (!(ImGui::IsMouseHoveringAnyWindow() || ImGui::IsAnyItemActive())) {
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+            if (!m_Pressed) {
+                m_Pressed = true;
+                m_PressStartTime = std::chrono::high_resolution_clock::now();
+            }
+            if (m_Pressed) {
+                if ((std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_PressStartTime)) > std::chrono::milliseconds(15)) {
+                    m_Dragging = true;
+                }
+            }
+        }
+        else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
+            m_Dragging = false;
+            m_FirstMouse = true; // Reset first mouse use
+            if (m_Pressed) {
+                m_Pressed = false;
+                if ((std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_PressStartTime)) < std::chrono::milliseconds(150)) {
+                    calculateRay(m_LastX, m_LastY, m_WindowWidth, m_WindowHeight);
+                }
+            }
+        }
     }
+    // Check Tab key state
+    int tabState = glfwGetKey(window, GLFW_KEY_TAB);
+
+    // Detect transition from pressed to released
+    if (tabState == GLFW_PRESS && !wasTabPressed) {
+    }
+    else if (tabState == GLFW_RELEASE && wasTabPressed) {
+        // The key was released this frame and was pressed last frame
+        m_CameraInfo.isLogToggled = !m_CameraInfo.isLogToggled;
+    }
+
+    // Update the previous state of the Tab key
+    wasTabPressed = (tabState == GLFW_PRESS);
 
 }
 
@@ -214,6 +231,4 @@ void Camera::calculateRay(double mouseX, double mouseY, int screenWidth, int scr
     m_CameraInfo.isRaySet = true;
     m_CameraInfo.ray = ray;
 }
-
-
-#pragma optimize("", on)  // Re-enable optimizations for the rest of the code
+#pragma optimize("", on)

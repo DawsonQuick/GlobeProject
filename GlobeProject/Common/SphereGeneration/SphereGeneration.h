@@ -6,6 +6,7 @@
 #include <random>   // For random number generation
 
 #include "./../Utilities/PerlinNoise/PerlinNoise.h"
+#include<chrono>
 
 const float PI = 3.14159265358979323846f;
 
@@ -99,7 +100,9 @@ inline void generateSphere(float radius, int sectorCount, int stackCount, std::v
 }
 
 inline void generateSpherifiedCubeSphere(float radius, int resolution, std::vector<float>& vertices, std::vector<unsigned int>& indices) {
-    PerlinNoise perlinNoise(std::chrono::high_resolution_clock::now().time_since_epoch().count());
+    
+    int currentTime = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+    PerlinNoise perlinNoise(currentTime);
 
     // Create a random number generator and distribution
     std::random_device rd;
@@ -108,7 +111,7 @@ inline void generateSpherifiedCubeSphere(float radius, int resolution, std::vect
 
     // Multi-octave noise parameters
     int numOctaves = 12;
-    float persistence = 0.75f;
+    float persistence = 0.9f;
 
     float x, y, z, nx, ny, nz;
     for (int face = 0; face < 6; ++face) {
@@ -133,14 +136,14 @@ inline void generateSpherifiedCubeSphere(float radius, int resolution, std::vect
 
                 // Multi-octave Perlin noise for smooth position variation
                 float noiseValue = 0.0f;
-                float amplitude = 1.5f;
+                float amplitude = 1.2f;
                 float frequency = 1.0f;
 
                 for (int octave = 0; octave < numOctaves; ++octave) {
                     float noise = perlinNoise.noise(x * frequency, y * frequency, z * frequency);
                     noiseValue += noise * amplitude;
                     amplitude *= persistence;
-                    frequency *= 1.5f;
+                    frequency *= 1.1f;
                 }
 
 
@@ -156,7 +159,7 @@ inline void generateSpherifiedCubeSphere(float radius, int resolution, std::vect
                 float currentDistance = std::sqrt(x * x + y * y + z * z);
 
                 // Apply Perlin noise to adjust the distance from the center
-                float perturbedDistance = currentDistance + noiseValue * 1000.0f; // Adjust 0.1f to control perturbation strength
+                float perturbedDistance = currentDistance + noiseValue * (0.1 * radius); // Adjust 0.1f to control perturbation strength
 
                 // Normalize the vertex direction
                 x /= currentDistance;

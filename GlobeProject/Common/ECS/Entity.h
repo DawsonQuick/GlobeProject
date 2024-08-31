@@ -65,5 +65,9 @@ namespace ECS {
 		return BoundingBoxComponent(RBB, RBT, RFT, RFB, LBB, LBT, LFT, LFB, color);
 	}
 
+	inline BoundingBoxComponent createBoundingBox(const BoundingBoxComponent& BB , const glm::vec3 color) {
+		return BoundingBoxComponent(BB, color);
+	}
+
 }
 #endif

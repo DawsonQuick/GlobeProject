@@ -16,11 +16,11 @@ void Globe::generate() {
     stopWatch.start();
 
     //generateSphere(6378.1f, (18 * 4), (18 * 2), vertices, indices);
-    generateSpherifiedCubeSphere(6378.1f, (18 * 4), vertices, indices);
+    generateSpherifiedCubeSphere(6378.1f, (12 * 4), vertices, indices);
 
-    std::cout << "Verticies: " << vertices.size() << std::endl;
-    std::cout << "Indices: " << indices.size() << std::endl;
-    m_boundingBox = calculateBoundingBox(vertices, size_t(8),size_t(3));
+   LOG_MESSAGE(LogLevel::INFO,"Verticies: " + std::to_string(vertices.size()));
+   LOG_MESSAGE(LogLevel::INFO,"Indices: " + std::to_string(indices.size()));
+    //m_boundingBox = calculateBoundingBox(vertices, size_t(8),size_t(3));
 
     int tempChunkSize = ChunkManager::getChunkSize();
     for (int i = 0; i < vertices.size(); i += 8) {
@@ -29,7 +29,7 @@ void Globe::generate() {
         ChunkManager::addTerrainPointToChunk(tempChunk, tmpPoint);
     }
 
-    stopWatch.stop();
+    LOG_MESSAGE(LogLevel::INFO, "Elapsed time building terrain: " + std::to_string(stopWatch.stopReturn()) + " ms");
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);

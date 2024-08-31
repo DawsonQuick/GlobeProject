@@ -7,6 +7,9 @@
 #include "./../../../Common/Utilities/OrbitalCalculation/SphericalOrbit/SphericalOrbitCalculator.h"
 #include "./../../../Common/ECS/Entity.h"
 #include "./../../../Common/Stopwatch/Stopwatch.h"
+#include "./../../../Common/ModelManager/ModelManager.h"
+#include "./../../../Common/SphereGeneration/SphereGeneration.h"
+#include "./../../../Common/Logger/Logger.h"
 class SimulationManager
 {
 public:

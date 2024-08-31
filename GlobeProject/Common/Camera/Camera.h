@@ -21,6 +21,9 @@ struct CameraInfo {
 
 	bool isRaySet;
 	Ray ray;
+
+	bool isLogToggled;
+
 	void renderRay() {
 		if (isRaySet) {
 			isRaySet = false;
@@ -33,7 +36,7 @@ struct CameraInfo {
 		}
 	}
 
-	CameraInfo() : lineRenderer(false){
+	CameraInfo() : lineRenderer(false), isLogToggled(false) {
 
 	}
 
@@ -67,4 +70,4 @@ private:
 	int m_WindowHeight;
 
 };
-#pragma optimize("", on)  // Re-enable optimizations for the rest of the code
+#pragma optimize("", on)

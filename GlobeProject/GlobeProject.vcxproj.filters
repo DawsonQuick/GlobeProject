@@ -12,8 +12,8 @@
     <ClCompile Include="Game\Managers\RenderManager\RenderManager.cpp" />
     <ClCompile Include="Game\Managers\SimulationManager\SimulationManager.cpp" />
     <ClCompile Include="Game\Managers\DataTransferManager\DataTransferManager.cpp" />
-    <ClCompile Include="Common\ModelLoading\AssimpLoader\AssimpLoader.cpp" />
-    <ClCompile Include="Common\ModelLoading\ModelManager\ModelManager.cpp" />
+    <ClCompile Include="Common\ModelManager\ModelLoading\AssimpLoader\AssimpLoader.cpp" />
+    <ClCompile Include="Common\ModelManager\ModelManager.cpp" />
     <ClCompile Include="Common\ECS\Systems\ECSRegistry\Registry.cpp" />
     <ClCompile Include="Common\OpenGLUtilities\ComputeShader\ComputeShader.cpp" />
     <ClCompile Include="Common\Utilities\ThreadPool\ThreadPool.cpp" />
@@ -24,6 +24,8 @@
     <ClCompile Include="Game\Terrain\Ground\Ground.cpp" />
     <ClCompile Include="Common\OpenGLUtilities\Skybox\Skybox.cpp" />
     <ClCompile Include="Common\Vendor\stb_image\stb_image.cpp" />
+    <ClCompile Include="Game\Managers\RenderManager\InstancedRenderingOrchestrator\InstancedRenderingOrchestrator.cpp" />
+    <ClCompile Include="Common\Logger\Logger.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Common">
@@ -286,9 +288,9 @@
     <ClInclude Include="Common\Vendor\assimp\XmlParser.h" />
     <ClInclude Include="Common\Vendor\assimp\XMLTools.h" />
     <ClInclude Include="Common\Vendor\assimp\ZipArchiveIOSystem.h" />
-    <ClInclude Include="Common\ModelLoading\AssimpLoader\AssimpLoader.h" />
-    <ClInclude Include="Common\ModelLoading\ModelManager\ModelManager.h" />
-    <ClInclude Include="Common\ModelLoading\BoundingBox\BoundingBoxGeneration.h" />
+    <ClInclude Include="Common\ModelManager\ModelLoading\AssimpLoader\AssimpLoader.h" />
+    <ClInclude Include="Common\ModelManager\ModelManager.h" />
+    <ClInclude Include="Common\ModelManager\ModelLoading\BoundingBox\BoundingBoxGeneration.h" />
     <ClInclude Include="Common\WorldInteraction\WorldInteraction.h" />
     <ClInclude Include="Common\WorldInteraction\CommonDataStrutures\CommonDataStructures.h" />
     <ClInclude Include="Common\ECS\Entity.h" />
@@ -306,6 +308,9 @@
     <ClInclude Include="Game\Terrain\Ground\Ground.h" />
     <ClInclude Include="Common\OpenGLUtilities\Skybox\Skybox.h" />
     <ClInclude Include="Common\Vendor\stb_image\stb_image.h" />
+    <ClInclude Include="Game\Managers\RenderManager\InstancedRenderingOrchestrator\InstancedRenderingOrchestrator.h" />
+    <ClInclude Include="Common\Logger\Logger.h" />
+    <ClInclude Include="Common\Utilities\CappedDeque\CappedDeque.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Common\Vendor\glm\detail\func_common.inl" />

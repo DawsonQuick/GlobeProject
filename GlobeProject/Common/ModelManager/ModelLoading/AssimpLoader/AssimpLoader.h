@@ -4,9 +4,9 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-#include "./../../vendor/imgui/imgui.h"
-#include "./../../vendor/glm/glm.hpp"
-#include "./../../vendor/glm/gtc/matrix_transform.hpp"
+#include "./../../../../Common/Vendor/imgui/imgui.h"
+#include "./../../../../Common/Vendor/glm/glm.hpp"
+#include "./../../../../Common/Vendor/glm/gtc/matrix_transform.hpp"
 
 #include <iostream>
 #include <vector>

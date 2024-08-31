@@ -8,7 +8,7 @@
 #include "./../../../Common/Vendor/glm/glm.hpp"
 #include "./../../../Common/Vendor/glm/gtc/matrix_transform.hpp"
 #include "./../../../Common/Vendor/glm/gtc/type_ptr.hpp"
-#include "./../../../Common/ModelLoading/BoundingBox/BoundingBoxGeneration.h"
+#include "./../../../Common/ModelManager/ModelLoading/BoundingBox/BoundingBoxGeneration.h"
 #include "./../../../Common/ChunkManager/ChunkManager.h"
 
 struct GroundRenderProperties {

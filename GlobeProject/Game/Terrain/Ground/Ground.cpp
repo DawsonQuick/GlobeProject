@@ -19,7 +19,7 @@ void Ground::generate() {
 
     std::cout << "Verticies: " << vertices.size() << std::endl;
     std::cout << "Indices: " << indices.size() << std::endl;
-    m_boundingBox = calculateBoundingBox(vertices, size_t(8), size_t(3));
+    //m_boundingBox = calculateBoundingBox(vertices, size_t(8), size_t(3));
 
     int tempChunkSize = ChunkManager::getChunkSize();
     for (int i = 0; i < vertices.size(); i += 8) {

@@ -8,6 +8,7 @@
 #include "./../../Common/Vendor/glm/glm.hpp"
 #include "./../../Common/WorldInteraction/WorldInteraction.h"
 #include "./../../Common/ECS/Systems/ECSRegistry/Registry.h"
+#include "./../../Common/Logger/Logger.h"
 #include <algorithm> // For std::find
 
 // Hash function for glm::ivec3
@@ -30,7 +31,7 @@ struct Vec3Equal {
 //Section to make private variables for the ChunkManager Namespace
 namespace {
    static int chunkSize = 5000;
-   static bool isDebugModeEnabled = false;
+   bool isDebugModeEnabled = true;
 
 }
 
@@ -135,6 +136,9 @@ namespace ChunkManager {
     inline bool isEntitySelected;
     inline entt::entity selectedEntity;
 
+    inline glm::ivec3 currentCameraChunk;
+
+
     inline bool& getIsDebugEnabled() {
         return isDebugModeEnabled;
     }
@@ -151,6 +155,15 @@ namespace ChunkManager {
             chunkSize = tmpChunkSize;
         }
     }
+
+    inline void updateCameraPosition(glm::vec3& cameraPosition) {
+        currentCameraChunk = getChunkFromPosition(cameraPosition);
+    }
+
+    inline glm::ivec3& getCurrentCameraChunk() {
+        return currentCameraChunk;
+    }
+
     
 
     /*---------------------------------------------------------------------------------------------------------------
@@ -174,7 +187,7 @@ namespace ChunkManager {
         }
         else {
             // Entity not found in the vector
-            std::cerr << "Entity not found in the chunk!" << std::endl;
+           LOG_MESSAGE(LogLevel::ERROR,"Entity not found in the chunk!");
         }
     }
 
@@ -220,7 +233,7 @@ namespace ChunkManager {
         }
         else {
             // Entity not found in the vector
-            std::cerr << "Entity not found in the chunk!" << std::endl;
+            LOG_MESSAGE(LogLevel::ERROR, "Entity not found in the chunk!");
         }
     }
     
@@ -322,8 +335,7 @@ namespace ChunkManager {
                         
                         selectedEntity = closestEntity;
                         isEntitySelected = true;
-                        
-                        std::cout << "Entity Found : " << static_cast<int>(closestEntity) << std::endl;
+                        LOG_MESSAGE(LogLevel::INFO, "Entity Found : " + std::to_string(static_cast<int>(closestEntity)));
                         break;
                     }
                     //--------------------------------------------------------------------------------------------------------------

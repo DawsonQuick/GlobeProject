@@ -63,13 +63,16 @@ int RenderManager::startRenderThread() {
     LineRenderer lineRenderer(true);
 
 
-    RenderUtils renderUtils;
+    //RenderUtils renderUtils;
+
+    InstancedRenderingOrchestrator instancedRenderer;
 
     Skybox skybox;
     skybox.loadSkyBox("./Resources/Skybox/Skybox1");
 
     Stopwatch<std::chrono::milliseconds> stopWatch;
     while (!glfwWindowShouldClose(window)) {
+        LOG_MESSAGE(LogLevel::INFO,"Stress test for logging");
         glfwPollEvents();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         //Process user peripheral input and update camera
@@ -151,8 +154,9 @@ int RenderManager::startRenderThread() {
         /*---------------------------------------------------------------------------------------
         *                                     Entity Render
           ---------------------------------------------------------------------------------------*/
-        renderUtils.updateInstanceData(dtMrg.getDoubleBuffer(DataTransferTypes::TEST)->getActiveBuffer());
-        renderUtils.render(info.view, info.projection , globe.getGlobeRenderProperties().lightPos);
+        //renderUtils.updateInstanceData(dtMrg.getDoubleBuffer(DataTransferTypes::TEST)->getActiveBuffer());
+        //renderUtils.render(info.view, info.projection , globe.getGlobeRenderProperties().lightPos);
+        instancedRenderer.updateAndRender(dtMrg.getDoubleBuffer(DataTransferTypes::TEST)->getActiveBuffer(), info.view, info.projection, globe.getGlobeRenderProperties().lightPos, globe.getGlobeRenderProperties().lightColor);
         //----------------------------------------------------------------------------------------
 
 
