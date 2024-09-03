@@ -64,7 +64,7 @@ namespace Logger {
 	inline static int currentCapacity = 500;
 	inline CappedDeque<std::string> logList(currentCapacity);
 
-	inline LogLevel activeLoggingLevel = LogLevel::DEBUG;
+	inline LogLevel activeLoggingLevel = LogLevel::INFO;
 
 	inline std::deque<std::string> getLogger() {
 		std::lock_guard<std::mutex> lock(loggerMutex);

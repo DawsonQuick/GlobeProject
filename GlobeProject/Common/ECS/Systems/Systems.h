@@ -53,6 +53,7 @@ struct PositionData {
     ivec3 chunk;
     float doRender;
 };
+
 layout (local_size_x = 256) in;
 
 // Buffer bindings

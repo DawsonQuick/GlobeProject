@@ -13,6 +13,7 @@ public:
 
     // Get Perlin noise value at coordinates x, y, z
     float noise(float x, float y, float z) const;
+    float noise2D(float x, float y) const;
 
 private:
     static const int PERMUTATION_SIZE = 256;

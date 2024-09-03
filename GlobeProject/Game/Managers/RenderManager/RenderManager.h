@@ -7,6 +7,7 @@
 #include <thread>
 #include <sstream>
 #include "./../../Terrain/Globe/Globe.h"
+#include "./../../Terrain/Planar/Planar.h"
 #include "./../../MainImGuiComponents/MainImGuiRender.h"
 #include "./../../../Common/Vendor/imgui/imgui.h"
 #include "./../../../Common/Vendor/imgui/imgui_impl_glfw_gl3.h"
@@ -26,6 +27,7 @@
 #include "./../DataTransferManager/DataTransferManager.h"
 #include "./RenderUtils/RenderUtils.h"
 #include "./InstancedRenderingOrchestrator/InstancedRenderingOrchestrator.h"
+#include "./../../Terrain/TerrainChunkOrchestrator/TerrainChunkOrchestrator.h"
 class RenderManager
 {
 

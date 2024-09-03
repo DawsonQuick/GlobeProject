@@ -4,41 +4,42 @@
 #include <iostream>
 #include <GL/glew.h>
 #include "./../../../Common/Stopwatch/Stopwatch.h"
-#include "./../../../Common/SphereGeneration/SphereGeneration.h"
+#include "./../../../Common/TerrainGeneration/PlanarTerrain/PlanarTerrain.h"
 #include "./../../../Common/Vendor/glm/glm.hpp"
 #include "./../../../Common/Vendor/glm/gtc/matrix_transform.hpp"
 #include "./../../../Common/Vendor/glm/gtc/type_ptr.hpp"
 #include "./../../../Common/ModelManager/ModelLoading/BoundingBox/BoundingBoxGeneration.h"
 #include "./../../../Common/ChunkManager/ChunkManager.h"
+#include "./../../../Common/Logger/Logger.h"
 
-struct GroundRenderProperties {
+struct PlanarTerrainRenderProperties {
     glm::vec3 lightPos;
     glm::vec3 lightColor;
     glm::vec3 objectColor;
 
-    GroundRenderProperties() {
+    PlanarTerrainRenderProperties() {
         lightPos = glm::vec3(10000000.2f, 1.0f, 2.0f);
         lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
         objectColor = glm::vec3(0.8f, 0.8f, 0.8f);
     }
 };
-
-class Ground
+#pragma optimize("", off) 
+class PlanarTerrain
 {
 public:
-    Ground();
-    ~Ground();
+    PlanarTerrain();
+    ~PlanarTerrain();
     void generate();
     void render(glm::mat4 model, glm::mat4 view, glm::mat4 projection, glm::vec3 viewPos);
     BoundingBox& getBoundingBoxInfo();
-    GroundRenderProperties& getGroundRenderProperties();
+    PlanarTerrainRenderProperties& getPlanarTerrainRenderProperties();
 private:
     unsigned int VBO, VAO, EBO;
     unsigned int shaderProgram;
     std::vector<float> vertices;
     std::vector<unsigned int> indices;
     Stopwatch<std::chrono::milliseconds> stopWatch;
-    GroundRenderProperties groundProperties;
+    PlanarTerrainRenderProperties planarTerrainProperties;
     BoundingBox m_boundingBox;
     unsigned int compileShader(unsigned int type, const char* source);
     unsigned int createShaderProgram();
@@ -47,26 +48,26 @@ private:
     const char* vertexShaderSource = R"(
 #version 330 core
 layout(location = 0) in vec3 aPos;
-layout(location = 1) in vec3 aNormal;
-layout(location = 2) in vec2 aTexCoords;
+layout(location = 1) in vec3 aNorm;
 
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
+out vec3 nNormal;
 out vec3 FragPos;
-out vec3 Normal;
-out vec2 TexCoords;
-out vec3 ViewPos; // Pass the view position to fragment shader
 
 void main()
 {
+    // Transform the position to world space
     FragPos = vec3(model * vec4(aPos, 1.0));
-    Normal = mat3(transpose(inverse(model))) * aNormal;
-    TexCoords = aTexCoords;
+    
+    // Calculate the normal in world space
+    mat3 normalMatrix = transpose(inverse(mat3(model)));
+    nNormal = normalize(normalMatrix * aNorm);
+    
+    // Apply projection and view to position
     gl_Position = projection * view * vec4(FragPos, 1.0);
-    // Pass the view position (camera position) in world space
-    ViewPos = vec3(view[3]);
 }
 )";
 
@@ -74,28 +75,26 @@ void main()
 #version 330 core
 out vec4 FragColor;
 
+in vec3 nNormal;
 in vec3 FragPos;
-in vec3 Normal;
-in vec2 TexCoords;
-in vec3 ViewPos; // Received from vertex shader
 
 uniform vec3 lightPos;
-uniform vec3 viewPos;
 uniform vec3 lightColor;
 uniform vec3 objectColor;
 
 void main()
 {
-    // ambient
-    float ambientStrength = 0.1;
+    // Ambient lighting
+    float ambientStrength = 0.3;
     vec3 ambient = ambientStrength * lightColor;
 
-    // diffuse 
-    vec3 norm = normalize(Normal);
+    // Diffuse lighting
+    vec3 norm = normalize(nNormal);
     vec3 lightDir = normalize(lightPos - FragPos);
     float diff = max(dot(norm, lightDir), 0.0);
     vec3 diffuse = diff * lightColor;
 
+    // Combine results and set fragment color
     vec3 result = (ambient + diffuse) * objectColor;
     FragColor = vec4(result, 1.0);
 }
@@ -103,3 +102,4 @@ void main()
 
 };
 #endif
+#pragma optimize("", on) 

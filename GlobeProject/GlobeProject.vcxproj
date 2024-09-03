@@ -70,6 +70,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -147,6 +150,7 @@
     <ClCompile Include="Common\ModelManager\ModelManager.cpp" />
     <ClCompile Include="Common\OpenGLUtilities\LineRenderer\LineRenderer.cpp" />
     <ClCompile Include="Common\OpenGLUtilities\Skybox\Skybox.cpp" />
+    <ClCompile Include="Common\TerrainGeneration\PlanarTerrain\ComputeShaderMethod\ComputeShaderPlanarTerrainGeneration.cpp" />
     <ClCompile Include="Common\Utilities\PerlinNoise\PerlinNoise.cpp" />
     <ClCompile Include="Common\Utilities\ThreadPool\ThreadPool.cpp" />
     <ClCompile Include="Common\Vendor\imgui\imgui.cpp" />
@@ -156,11 +160,14 @@
     <ClCompile Include="Common\Vendor\imgui\main.cpp" />
     <ClCompile Include="Common\OpenGLUtilities\ComputeShader\ComputeShader.cpp" />
     <ClCompile Include="Common\Vendor\stb_image\stb_image.cpp" />
+    <ClCompile Include="Common\Vendor\stb_image\stb_image_write.cpp" />
     <ClCompile Include="Game\Managers\DataTransferManager\DataTransferManager.cpp" />
     <ClCompile Include="Game\Managers\RenderManager\InstancedRenderingOrchestrator\InstancedRenderingOrchestrator.cpp" />
     <ClCompile Include="Game\Managers\RenderManager\RenderUtils\RenderUtils.cpp" />
     <ClCompile Include="Game\Terrain\Globe\Globe.cpp" />
-    <ClCompile Include="Game\Terrain\Ground\Ground.cpp" />
+    <ClCompile Include="Game\Terrain\Planar\Planar.cpp" />
+    <ClCompile Include="Game\Terrain\TerrainChunkOrchestrator\ChunkInstance\ChunkInstance.cpp" />
+    <ClCompile Include="Game\Terrain\TerrainChunkOrchestrator\TerrainChunkOrchestrator.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Game\Managers\RenderManager\RenderManager.cpp" />
     <ClCompile Include="Game\Managers\SimulationManager\SimulationManager.cpp" />
@@ -182,6 +189,8 @@
     <ClInclude Include="Common\OpenGLUtilities\Skybox\Skybox.h" />
     <ClInclude Include="Common\OpenGLUtilities\UniveralStructs.h" />
     <ClInclude Include="Common\SphereGeneration\SphereGeneration.h" />
+    <ClInclude Include="Common\TerrainGeneration\PlanarTerrain\ComputeShaderMethod\ComputeShaderPlanarTerrainGeneration.h" />
+    <ClInclude Include="Common\TerrainGeneration\PlanarTerrain\PlanarTerrain.h" />
     <ClInclude Include="Common\Units\Coordinates\Coordinates.h" />
     <ClInclude Include="Common\Units\Distance\Metric\MetricDistance.h" />
     <ClInclude Include="Common\Units\Speed\Speed.h" />
@@ -429,6 +438,7 @@
     <ClInclude Include="Common\Vendor\imgui\stb_textedit.h" />
     <ClInclude Include="Common\Vendor\imgui\stb_truetype.h" />
     <ClInclude Include="Common\Vendor\stb_image\stb_image.h" />
+    <ClInclude Include="Common\Vendor\stb_image\stb_image_write.h" />
     <ClInclude Include="Common\WorldInteraction\CommonDataStrutures\CommonDataStructures.h" />
     <ClInclude Include="Common\WorldInteraction\WorldInteraction.h" />
     <ClInclude Include="Common\OpenGLUtilities\ComputeShader\ComputeShader.h" />
@@ -440,7 +450,12 @@
     <ClInclude Include="Game\Managers\RenderManager\RenderManager.h" />
     <ClInclude Include="Game\Managers\SimulationManager\SimulationManager.h" />
     <ClInclude Include="Game\Terrain\Globe\GlobeGui\GlobeGui.h" />
-    <ClInclude Include="Game\Terrain\Ground\Ground.h" />
+    <ClInclude Include="Game\Terrain\Planar\PlanarGui\PlanarGui.h" />
+    <ClInclude Include="Game\Terrain\Planar\Planar.h" />
+    <ClInclude Include="Game\Terrain\TerrainChunkOrchestrator\ChunkInstance\ChunkInstance.h" />
+    <ClInclude Include="Game\Terrain\TerrainChunkOrchestrator\GuiInterface\TerrainChunkGuiInterface.h" />
+    <ClInclude Include="Game\Terrain\TerrainChunkOrchestrator\TerrainChunkOrchestrator.h" />
+    <ClInclude Include="Game\Terrain\TerrainChunkOrchestrator\Utils\ChunkUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Common\Vendor\assimp\color4.inl" />

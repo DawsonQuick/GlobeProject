@@ -10,6 +10,7 @@
 #include "./../../../Common/ModelManager/ModelManager.h"
 #include "./../../../Common/SphereGeneration/SphereGeneration.h"
 #include "./../../../Common/Logger/Logger.h"
+#include "./../../../Common/Vendor/stb_image/stb_image_write.h"
 class SimulationManager
 {
 public:

@@ -52,6 +52,10 @@ inline void renderImGui(GLFWwindow* window , Camera &cam) {
         }
         ImGui::TreePop();
     }
+    if (ImGui::Button(ChunkManager::getIsDebugEnabled() ? "Chunk Debug ON" : "Chunk Debug OFF")) {
+        ChunkManager::getIsDebugEnabled() = !ChunkManager::getIsDebugEnabled(); // Toggle the state
+    }
+
     ImGui::End();
 
 

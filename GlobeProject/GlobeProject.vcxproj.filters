@@ -21,11 +21,15 @@
     <ClCompile Include="Game\Managers\RenderManager\RenderUtils\RenderUtils.cpp" />
     <ClCompile Include="Common\ChunkManager\ChunkManager.cpp" />
     <ClCompile Include="Common\Utilities\PerlinNoise\PerlinNoise.cpp" />
-    <ClCompile Include="Game\Terrain\Ground\Ground.cpp" />
+    <ClCompile Include="Game\Terrain\Planar\Planar.cpp" />
     <ClCompile Include="Common\OpenGLUtilities\Skybox\Skybox.cpp" />
     <ClCompile Include="Common\Vendor\stb_image\stb_image.cpp" />
     <ClCompile Include="Game\Managers\RenderManager\InstancedRenderingOrchestrator\InstancedRenderingOrchestrator.cpp" />
     <ClCompile Include="Common\Logger\Logger.cpp" />
+    <ClCompile Include="Common\TerrainGeneration\PlanarTerrain\ComputeShaderMethod\ComputeShaderPlanarTerrainGeneration.cpp" />
+    <ClCompile Include="Common\Vendor\stb_image\stb_image_write.cpp" />
+    <ClCompile Include="Game\Terrain\TerrainChunkOrchestrator\TerrainChunkOrchestrator.cpp" />
+    <ClCompile Include="Game\Terrain\TerrainChunkOrchestrator\ChunkInstance\ChunkInstance.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Common">
@@ -305,12 +309,20 @@
     <ClInclude Include="Common\OpenGLUtilities\UniveralStructs.h" />
     <ClInclude Include="Common\ChunkManager\ChunkManager.h" />
     <ClInclude Include="Common\Utilities\PerlinNoise\PerlinNoise.h" />
-    <ClInclude Include="Game\Terrain\Ground\Ground.h" />
+    <ClInclude Include="Game\Terrain\Planar\Planar.h" />
     <ClInclude Include="Common\OpenGLUtilities\Skybox\Skybox.h" />
     <ClInclude Include="Common\Vendor\stb_image\stb_image.h" />
     <ClInclude Include="Game\Managers\RenderManager\InstancedRenderingOrchestrator\InstancedRenderingOrchestrator.h" />
     <ClInclude Include="Common\Logger\Logger.h" />
     <ClInclude Include="Common\Utilities\CappedDeque\CappedDeque.h" />
+    <ClInclude Include="Common\TerrainGeneration\PlanarTerrain\PlanarTerrain.h" />
+    <ClInclude Include="Game\Terrain\Planar\PlanarGui\PlanarGui.h" />
+    <ClInclude Include="Common\TerrainGeneration\PlanarTerrain\ComputeShaderMethod\ComputeShaderPlanarTerrainGeneration.h" />
+    <ClInclude Include="Common\Vendor\stb_image\stb_image_write.h" />
+    <ClInclude Include="Game\Terrain\TerrainChunkOrchestrator\TerrainChunkOrchestrator.h" />
+    <ClInclude Include="Game\Terrain\TerrainChunkOrchestrator\ChunkInstance\ChunkInstance.h" />
+    <ClInclude Include="Game\Terrain\TerrainChunkOrchestrator\Utils\ChunkUtils.h" />
+    <ClInclude Include="Game\Terrain\TerrainChunkOrchestrator\GuiInterface\TerrainChunkGuiInterface.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Common\Vendor\glm\detail\func_common.inl" />

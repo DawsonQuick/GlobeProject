@@ -9,6 +9,8 @@
 #include "./../../Common/WorldInteraction/WorldInteraction.h"
 #include "./../../Common/ECS/Systems/ECSRegistry/Registry.h"
 #include "./../../Common/Logger/Logger.h"
+#include "./../../Common/TerrainGeneration/PlanarTerrain/ComputeShaderMethod/ComputeShaderPlanarTerrainGeneration.h"
+#include "./../../Common/Stopwatch/Stopwatch.h"
 #include <algorithm> // For std::find
 
 // Hash function for glm::ivec3
@@ -32,7 +34,7 @@ struct Vec3Equal {
 namespace {
    static int chunkSize = 5000;
    bool isDebugModeEnabled = true;
-
+   Stopwatch<std::chrono::milliseconds> sw;
 }
 
 
@@ -137,7 +139,11 @@ namespace ChunkManager {
     inline entt::entity selectedEntity;
 
     inline glm::ivec3 currentCameraChunk;
+    inline bool hasCameraChunkChanged = false;
+    inline bool hasNewChunkBeenLoaded = false;
 
+    inline bool hasChunkBeenLoaded = false;
+    inline bool hasChunkBeenReceived = false;
 
     inline bool& getIsDebugEnabled() {
         return isDebugModeEnabled;

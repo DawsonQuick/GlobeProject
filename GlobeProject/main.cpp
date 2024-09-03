@@ -22,9 +22,5 @@ int main() {
 
     renderManagerThread.start(&RenderManager::startRenderThread, &renderManager);
     simulationThread.start(&SimulationManager::startSimulationThread, &simulationManager);
-
-    //Wait for the threads to end before shutting down the program
-    renderManagerThread.join();
-    simulationThread.join();
-    
+        
 }

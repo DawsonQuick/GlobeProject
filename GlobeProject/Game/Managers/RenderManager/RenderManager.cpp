@@ -50,10 +50,13 @@ int RenderManager::startRenderThread() {
     }
     glEnable(GL_DEPTH_TEST);
 
-    Globe globe;
-    globe.generate();
+    //Globe globe;
+    //globe.generate();
 
+    //PlanarTerrain planarTerrain;
+    //planarTerrain.generate();
 
+    TerrainChunkOrchestrator terrainChunkOrchestrator;
 
     ImGui::CreateContext();
     ImGui_ImplGlfwGL3_Init(window, true);
@@ -72,7 +75,9 @@ int RenderManager::startRenderThread() {
 
     Stopwatch<std::chrono::milliseconds> stopWatch;
     while (!glfwWindowShouldClose(window)) {
-        LOG_MESSAGE(LogLevel::INFO,"Stress test for logging");
+
+       
+
         glfwPollEvents();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         //Process user peripheral input and update camera
@@ -107,7 +112,9 @@ int RenderManager::startRenderThread() {
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
         CameraInfo info = camera.getCameraInfo();
-        globe.render(model, info.view, info.projection, info.m_CameraPos);
+        //globe.render(model, info.view, info.projection, info.m_CameraPos);
+        //planarTerrain.render(glm::mat4(1.0f), info.view, info.projection, info.m_CameraPos);
+        terrainChunkOrchestrator.render(glm::mat4(1.0f), info.view, info.projection);
         renderImGui(window,camera);
 
         skybox.RenderSkyBox(info.view, info.projection);
@@ -156,7 +163,8 @@ int RenderManager::startRenderThread() {
           ---------------------------------------------------------------------------------------*/
         //renderUtils.updateInstanceData(dtMrg.getDoubleBuffer(DataTransferTypes::TEST)->getActiveBuffer());
         //renderUtils.render(info.view, info.projection , globe.getGlobeRenderProperties().lightPos);
-        instancedRenderer.updateAndRender(dtMrg.getDoubleBuffer(DataTransferTypes::TEST)->getActiveBuffer(), info.view, info.projection, globe.getGlobeRenderProperties().lightPos, globe.getGlobeRenderProperties().lightColor);
+        //instancedRenderer.updateAndRender(dtMrg.getDoubleBuffer(DataTransferTypes::TEST)->getActiveBuffer(), info.view, info.projection, globe.getGlobeRenderProperties().lightPos, globe.getGlobeRenderProperties().lightColor);
+        //instancedRenderer.updateAndRender(dtMrg.getDoubleBuffer(DataTransferTypes::TEST)->getActiveBuffer(), info.view, info.projection, planarTerrain.getPlanarTerrainRenderProperties().lightPos, planarTerrain.getPlanarTerrainRenderProperties().lightColor);
         //----------------------------------------------------------------------------------------
 
 

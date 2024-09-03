@@ -31,11 +31,47 @@ void SimulationManager::startSimulationThread() {
 	std::uniform_real_distribution<double> dis2(20000.0, 45000.0);
 	std::uniform_real_distribution<float> colorDis(0.0, 1.0);
 
+	/*
+	ComputeTerrainGenInfo_IN inData(2322454,512,0,0,5000,25,100.0f,0.3f,
+		0.000001f,7.0f,100.0f);
+
+	ComputeTerrainGenInfo_OUT outData;
+
+	ComputeShaderPlanarTerrainGeneration tempTerrainGenerator;
+
+	stopWatch.start();
+
+	tempTerrainGenerator.performOperations(inData, outData);
+
+	LOG_MESSAGE(LogLevel::INFO, "Time to generate chunk information: " + std::to_string(stopWatch.stopReturn()));
+
+
+	stopWatch.start();
+	//-------------------------------------------------------------------------------------------------------------------------------
+	// Assuming outData.heightMap is a vector of floats, and each float is in the range [0.0, 1.0]
+	std::vector<unsigned char> imageData(outData.width * outData.height);
+
+	for (size_t i = 0; i < outData.outData.size(); ++i) {
+		imageData[i] = static_cast<unsigned char>(outData.outData[i].a * 255.0f); // Scale to [0, 255]
+	}
+
+	stbi_write_png("heightMap_image.png", outData.width, outData.height, 1, imageData.data(), outData.width * 1);
+	//-------------------------------------------------------------------------------------------------------------------------------
+	imageData.clear();
+	imageData.shrink_to_fit();
+	std::vector<unsigned char>().swap(imageData);
+
+	outData.free();
+	tempTerrainGenerator.~ComputeShaderPlanarTerrainGeneration();
+
+	LOG_MESSAGE(LogLevel::INFO, "Finshed generating images and cleanup, time taken: " + std::to_string(stopWatch.stopReturn()));
+	//-------------------------------------------------------------------------------------------------------------------------------
+	*/
 
 	/* --------------------------------------------------------------------------------------------------------------------------------------------------------
 	*																Temp code for generating models
 	   -------------------------------------------------------------------------------------------------------------------------------------------------------- */
-	
+	/*
 	int totalSuccess = 0;
 	int totalFailed = 0;
 
@@ -64,20 +100,21 @@ void SimulationManager::startSimulationThread() {
 	
 	LOG_MESSAGE(LogLevel::INFO,"Total Success: " + std::to_string(totalSuccess));
 	LOG_MESSAGE(LogLevel::INFO,"Total Failed: " + std::to_string(totalFailed));
-	
+	*/
 	/* --------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
 	while (true) {
-		//------------------------------------------------------------------
-		//   Conditional Checks before running the simulation loop
-		//------------------------------------------------------------------
+
 		if (dtMrg.terminationSignal()) {
 			break;
 		}
+		//------------------------------------------------------------------
+		//   Conditional Checks before running the simulation loop
+		//------------------------------------------------------------------
 		if (dtMrg.pauseSimulation()) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(50));
 		}
-		if (!(ECS::registry.storage<entt::entity>().in_use())) {
+		else if (!(ECS::registry.storage<entt::entity>().in_use())) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(50));
 		}
 		//------------------------------------------------------------------
@@ -88,7 +125,6 @@ void SimulationManager::startSimulationThread() {
 			dtMrg.getDoubleBuffer(DataTransferTypes::TEST)->getInactiveBuffer()->assign(tmpBoundingBoxResults.begin(), tmpBoundingBoxResults.end());
 			dtMrg.getDoubleBuffer(DataTransferTypes::TEST)->swapBuffers();
 			dtMrg.getSimulationFrameRate() = stopWatch.stopReturn();
-			LOG_MESSAGE(LogLevel::DEBUG,"This is a stress test for logging");
 		}
 	}
 
