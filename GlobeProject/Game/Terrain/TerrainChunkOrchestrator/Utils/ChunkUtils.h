@@ -64,7 +64,28 @@ inline void bindMapTexture(unsigned int& gradientMapBuffer, const std::vector<gl
     glBindTexture(GL_TEXTURE_2D, gradientMapBuffer); // Bind the gradient map texture object
     if (!data.empty()) {
         // Set the texture data and generate mipmaps
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, data.data());
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, data.data());
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        // Set texture parameters
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        LOG_MESSAGE(LogLevel::INFO, "Success: GradientMap loaded into a GLTextureBuffer");
+    }
+    else {
+        LOG_MESSAGE(LogLevel::WARN, "Warning: GradientMap data is empty, texture not updated.");
+    }
+
+    glBindTexture(GL_TEXTURE_2D, 0); // Unbind the texture when done
+}
+
+inline void bindHeightTexture(unsigned int& heightMapBuffer, const std::vector<float>& data, int width, int height) {
+    glBindTexture(GL_TEXTURE_2D, heightMapBuffer); // Bind the gradient map texture object
+    if (!data.empty()) {
+        // Set the texture data and generate mipmaps
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_R16F, width, height, 0, GL_RED, GL_FLOAT, data.data());
         glGenerateMipmap(GL_TEXTURE_2D);
 
         // Set texture parameters

@@ -22,9 +22,9 @@ void TerrainChunkOrchestrator::render(glm::mat4 model, glm::mat4 view, glm::mat4
 	if (!isInstanceSet) {
 		ComputeShaderPlanarTerrainGeneration tempTerrainGenerator;
 		
-		for (int j = 0; j < 6; j++) {
-			for (int i = 0; i < 6; i++) {
-				ComputeTerrainGenInfo_IN inData(2322454, 512, j, i, 1000, 5, 50.0f, 0.3f, 0.0001f, 5.0f, 100.0f);
+		for (int j = 0; j < 16; j++) {
+			for (int i = 0; i < 16; i++) {
+				ComputeTerrainGenInfo_IN inData(69420, 512, j, i, 1000, 5, 50.0f, 0.25f, 0.0001f, 4.5f, 100.0f);
 				ComputeTerrainGenInfo_OUT outdata;
 				tempTerrainGenerator.performOperations(inData, outdata);
 				std::unique_ptr<ChunkInstance> tmp = std::make_unique<ChunkInstance>(outdata, inData.xOffset, inData.yOffset);

@@ -56,6 +56,8 @@ struct ComputeTerrainGenInfo_IN {
 struct ComputeTerrainGenInfo_OUT {
 	std::vector<glm::vec4> outData;      // Vector to store height data
 
+
+
 	int width, height;
 
 	void free() {

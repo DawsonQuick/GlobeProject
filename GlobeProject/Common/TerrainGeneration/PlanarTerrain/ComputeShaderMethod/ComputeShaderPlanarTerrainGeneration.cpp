@@ -44,6 +44,7 @@ void ComputeShaderPlanarTerrainGeneration::performOperations(ComputeTerrainGenIn
         glBufferData(GL_SHADER_STORAGE_BUFFER, settings.chunkSize * settings.chunkSize * sizeof(glm::vec4), NULL, GL_DYNAMIC_DRAW);
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, ssboOutput);
 
+
         previousChunkSize = settings.chunkSize;
     }
 

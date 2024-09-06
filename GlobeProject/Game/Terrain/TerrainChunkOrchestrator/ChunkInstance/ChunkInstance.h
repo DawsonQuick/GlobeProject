@@ -16,6 +16,7 @@ public:
 private:
 	unsigned int m_VOA;
 	unsigned int m_MapBuffer;
+	unsigned int m_HeightBuffer;
 	
 
 };

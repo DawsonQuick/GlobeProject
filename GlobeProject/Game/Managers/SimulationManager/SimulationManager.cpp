@@ -51,8 +51,8 @@ void SimulationManager::startSimulationThread() {
 	// Assuming outData.heightMap is a vector of floats, and each float is in the range [0.0, 1.0]
 	std::vector<unsigned char> imageData(outData.width * outData.height);
 
-	for (size_t i = 0; i < outData.outData.size(); ++i) {
-		imageData[i] = static_cast<unsigned char>(outData.outData[i].a * 255.0f); // Scale to [0, 255]
+	for (size_t i = 0; i < outData.heightData.size(); ++i) {
+		imageData[i] = static_cast<unsigned char>(outData.heightData[i] * 255); // Scale to [0, 255]
 	}
 
 	stbi_write_png("heightMap_image.png", outData.width, outData.height, 1, imageData.data(), outData.width * 1);

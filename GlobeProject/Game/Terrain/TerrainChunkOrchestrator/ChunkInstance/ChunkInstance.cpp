@@ -11,8 +11,11 @@ ChunkInstance::ChunkInstance(ComputeTerrainGenInfo_OUT& mapData, int xOffset, in
 	glGenVertexArrays(1, &m_VOA);
 
 	glGenTextures(1, &m_MapBuffer);
-	generateVertices(m_VOA, mapData.width*30, mapData.height*30, 4 , xOffset - 3  , yOffset - 3);
+	glGenTextures(1, &m_HeightBuffer);
+
+	generateVertices(m_VOA, mapData.width*300, mapData.height*300, 4 , xOffset - 8 , yOffset - 8);
 	bindMapTexture(m_MapBuffer, mapData.outData, mapData.width, mapData.height);
+	//bindHeightTexture(m_HeightBuffer, mapData.heightData, mapData.width, mapData.height);
 	glPatchParameteri(GL_PATCH_VERTICES, 4);
 }
 
@@ -20,6 +23,7 @@ ChunkInstance::~ChunkInstance() {
 	glDeleteVertexArrays(1, &m_VOA);
 
 	glDeleteTextures(1, &m_MapBuffer);
+	glDeleteTextures(1, &m_HeightBuffer);
 
 }
 

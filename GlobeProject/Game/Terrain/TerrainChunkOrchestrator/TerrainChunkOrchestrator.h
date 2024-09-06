@@ -68,8 +68,9 @@ private:
             vec2 t1 = (t11 - t10) * u + t10;
             vec2 texCoord = (t1 - t0) * v + t0;
             
-            vec4 packedData = texture(heightMap, texCoord).rgba;
-            Height = packedData.a * (50*30) ;
+            vec4 packedData = texture(heightMap, texCoord);
+            Height = packedData.a * (50 * 300);
+
 
             unpackData(packedData,terrainNormal,terrainGradient);
 
@@ -88,7 +89,7 @@ private:
             vec4 p1 = (p11 - p10) * u + p10;
             p = (p1 - p0) * v + p0 + normal * Height;
 
-            p.y -= (500 * 30); // Shifting down in Y direction
+           // p.y -= (500 * 300); // Shifting down in Y direction
 
             gl_Position = projection * view * model * p;
         }
@@ -196,7 +197,6 @@ private:
             float steepness = steepnessValue;
 
             vec3 color;
-            //vec3 mixResult = mix(color2,color1,normalizedAngle - 0.2);
 
             if((normalizedAngleX > steepness && normalizedAngleY > steepness) || (normalizedAngleX > steepness && normalizedAngleZ > steepness) || (normalizedAngleY > steepness && normalizedAngleZ > steepness) ){
                 color = vec3(0.0,0.669,0.063);
