@@ -7,6 +7,7 @@ SimulationManager::SimulationManager(): dtMrg(DataTransferManager::getInstance()
 SimulationManager::~SimulationManager() {
 
 }
+
 void SimulationManager::startSimulationThread() {
 
 	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
@@ -31,54 +32,20 @@ void SimulationManager::startSimulationThread() {
 	std::uniform_real_distribution<double> dis2(20000.0, 45000.0);
 	std::uniform_real_distribution<float> colorDis(0.0, 1.0);
 
-	/*
-	ComputeTerrainGenInfo_IN inData(2322454,512,0,0,5000,25,100.0f,0.3f,
-		0.000001f,7.0f,100.0f);
-
-	ComputeTerrainGenInfo_OUT outData;
-
-	ComputeShaderPlanarTerrainGeneration tempTerrainGenerator;
-
-	stopWatch.start();
-
-	tempTerrainGenerator.performOperations(inData, outData);
-
-	LOG_MESSAGE(LogLevel::INFO, "Time to generate chunk information: " + std::to_string(stopWatch.stopReturn()));
-
-
-	stopWatch.start();
-	//-------------------------------------------------------------------------------------------------------------------------------
-	// Assuming outData.heightMap is a vector of floats, and each float is in the range [0.0, 1.0]
-	std::vector<unsigned char> imageData(outData.width * outData.height);
-
-	for (size_t i = 0; i < outData.heightData.size(); ++i) {
-		imageData[i] = static_cast<unsigned char>(outData.heightData[i] * 255); // Scale to [0, 255]
-	}
-
-	stbi_write_png("heightMap_image.png", outData.width, outData.height, 1, imageData.data(), outData.width * 1);
-	//-------------------------------------------------------------------------------------------------------------------------------
-	imageData.clear();
-	imageData.shrink_to_fit();
-	std::vector<unsigned char>().swap(imageData);
-
-	outData.free();
-	tempTerrainGenerator.~ComputeShaderPlanarTerrainGeneration();
-
-	LOG_MESSAGE(LogLevel::INFO, "Finshed generating images and cleanup, time taken: " + std::to_string(stopWatch.stopReturn()));
-	//-------------------------------------------------------------------------------------------------------------------------------
-	*/
-
 	/* --------------------------------------------------------------------------------------------------------------------------------------------------------
 	*																Temp code for generating models
 	   -------------------------------------------------------------------------------------------------------------------------------------------------------- */
-	/*
+	
 	int totalSuccess = 0;
 	int totalFailed = 0;
 
-	for (int j = 0; j < 250; j++) {
+	int totalVertices = 0;
+	int totalIndices = 0;
+
+	for (int j = 0; j < 100; j++) {
 		std::vector<float> vertices;
 		std::vector<unsigned int> indices;
-		generateSpherifiedCubeSphere(300, (3 * 4), vertices, indices);
+		generateSpherifiedCubeSphere(100, (2 * 2), vertices, indices);
 		int id = ModelManager::loadModel(vertices, indices, "astroid"+std::to_string(j));
 
 		auto model2 = ModelManager::getModel(id);
@@ -87,20 +54,31 @@ void SimulationManager::startSimulationThread() {
 			return;
 		}
 		totalSuccess++;
-		for (int i = 0; i < 50; i++) {
+		for (int i = 0; i < 250; i++) {
+			totalVertices += vertices.size();
+			totalIndices += indices.size();
+
 			ECS::Entity entity = ECS::create();
 			entity.addComponent<PositionComponent>(glm::vec3(0.0f, 0.0f, 0.0f));
 			entity.addComponent<TransformComponent>(glm::mat4(1.0),id);
-			entity.addComponent<BoundingBoxComponent>(ECS::createBoundingBox(ModelManager::getModel(id)->boundingBox, glm::vec3(colorDis(gen), colorDis(gen), colorDis(gen))));
+
+			ModelBoundingBox tmpBox = ModelManager::getModel(id)->boundingBox;
+			BoundingBoxComponent tmpComponentBox(tmpBox.RBB, tmpBox.RBT, tmpBox.RFT, tmpBox.RFB, tmpBox.LBB, tmpBox.LBT, tmpBox.LFT, tmpBox.LFB,glm::vec3(colorDis(gen), colorDis(gen), colorDis(gen)));
+
+			entity.addComponent<BoundingBoxComponent>(tmpComponentBox);
 			//entity.addComponent<CircularOrbitComponent>(dis2(gen), dis(gen) * 3.1415 / 180, dis(gen) * 3.1415 / 180);
 			entity.addComponent<CircularOrbitComponent>(dis2(gen), dis(gen) * 3.1415 / 180, 45.0 * 3.1415 / 180);
+			
+			Scene::getInstance().addEntity(entity.getRawEntity(), entity);
 		}
 
 	}
 	
 	LOG_MESSAGE(LogLevel::INFO,"Total Success: " + std::to_string(totalSuccess));
 	LOG_MESSAGE(LogLevel::INFO,"Total Failed: " + std::to_string(totalFailed));
-	*/
+	LOG_MESSAGE(LogLevel::INFO,"Total Vertices: " + std::to_string(totalVertices));
+	LOG_MESSAGE(LogLevel::INFO,"Total Indices: " + std::to_string(totalIndices));
+	
 	/* --------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
 	while (true) {

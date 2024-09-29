@@ -3,16 +3,31 @@
 #define COMPONENTS_H
 #include <utility>
 #include <cmath>
+#include <vector>
 #include "./../../Vendor/glm/glm.hpp"
 #include "./../../Vendor/glm/gtc/matrix_transform.hpp"
-#include "./../../Utilities/OrbitalCalculation/SphericalOrbit/SphericalOrbitCalculator.h"
+#include "./../../../Common/Utilities/OrbitalCalculation/SphericalOrbit/SphericalOrbitCalculator.h"
 #include "./../../Vendor/imgui/imgui.h"
 
-struct IRenderable {
+
+
+struct IComponent {
+public:
+    virtual ~IComponent() = default;
+
+    // A virtual method that all components must implement.
+    // Could be useful for serialization or debugging.
+   // virtual void serialize() const = 0;
+
+    // Optional: A method to identify the type (helpful for reflection-like behavior)
+    //virtual const char* getType() const = 0;
+};
+
+struct IRenderable : public IComponent {
     virtual void guiRender() = 0; // Pure virtual function
 };
 
-struct PositionComponent : public IRenderable {
+struct PositionComponent : public IRenderable, IComponent {
     glm::vec3 position;
     glm::ivec3 chunk;
 
@@ -35,7 +50,7 @@ struct PositionComponent : public IRenderable {
 
 };
 
-struct VelocityComponent {
+struct VelocityComponent : public IComponent {
     glm::vec3 velocity;
     VelocityComponent() = default;
     VelocityComponent(const VelocityComponent&) = default;
@@ -43,7 +58,7 @@ struct VelocityComponent {
         :velocity(newVelocity) {}
 };
 
-struct TransformComponent : public IRenderable {
+struct TransformComponent : public IRenderable , IComponent {
     glm::mat4 transform;
     float scale;
     int modelId;
@@ -84,7 +99,7 @@ struct TransformComponent : public IRenderable {
      }
 };
 
-struct BoundingBoxComponent : public IRenderable {
+struct BoundingBoxComponent : public IRenderable , IComponent {
     glm::vec3 RBB;
     glm::vec3 RBT;
     glm::vec3 RFT;
@@ -127,14 +142,6 @@ struct BoundingBoxComponent : public IRenderable {
     }
 
     BoundingBoxComponent(const BoundingBoxComponent& copy , glm::vec3 color) {
-        //printVec3(copy.RBB);
-        //printVec3(copy.RBT);
-        //printVec3(copy.RFT);
-        //printVec3(copy.RFB);
-        //printVec3(copy.LBB);
-        //printVec3(copy.LBT);
-        //printVec3(copy.LFT);
-        //printVec3(copy.LFB);
         RBB = copy.RBB;
         RBT = copy.RBT;
         RFT = copy.RFT;
@@ -186,7 +193,7 @@ private:
     bool dataGenerated;
 };
 
-struct CircularOrbitComponent : public IRenderable {
+struct CircularOrbitComponent : public IRenderable , IComponent {
     double radius;
     float tempRadius = static_cast<float>(radius);
     double inclination;
@@ -212,7 +219,7 @@ struct CircularOrbitComponent : public IRenderable {
             if (ImGui::DragFloat("Radius", &tempRadius, 1.0f)) {
                 radius = static_cast<double>(tempRadius);
                 // This block will be executed if the slider changes the value of myFloat
-                period = (orbitalPeriod(6.67430e-11, 5.972e24, radius) * 100000);
+                period = (orbitalPeriod(6.67430e-11, 5.972e24, radius) * 10000);
             }
             if(ImGui::DragFloat("Inclination", &tempInclination,0.01,0.0, 6.283)) {
                 inclination = static_cast<double>(tempInclination);

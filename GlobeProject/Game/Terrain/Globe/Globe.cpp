@@ -87,7 +87,7 @@ void Globe::render(glm::mat4 model, glm::mat4 view, glm::mat4 projection, glm::v
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indiceSize, GL_UNSIGNED_INT, 0);
 
-    globeGuiRender(globeProperties);
+    //globeGuiRender(globeProperties);
 
 }
 

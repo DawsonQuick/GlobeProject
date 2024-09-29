@@ -1,5 +1,4 @@
 #include "RenderManager.h"
-
 unsigned int SCR_WIDTH = 2560;
 unsigned int SCR_HEIGHT = 1440;
 
@@ -14,8 +13,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 
 }
 bool wireframe = false;
-void processInput(GLFWwindow* window) {
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+void toggleWireFrame() {
         wireframe = !wireframe;
         if (wireframe) {
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -23,8 +21,6 @@ void processInput(GLFWwindow* window) {
         else {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(150));
-    }
 }
 
 GLFWwindow* window;
@@ -50,22 +46,26 @@ int RenderManager::startRenderThread() {
     }
     glEnable(GL_DEPTH_TEST);
 
-    //Globe globe;
-    //globe.generate();
+    Globe globe;
+    globe.generate();
 
     //PlanarTerrain planarTerrain;
     //planarTerrain.generate();
 
-    TerrainChunkOrchestrator terrainChunkOrchestrator;
+    //TerrainChunkOrchestrator terrainChunkOrchestrator;
 
     ImGui::CreateContext();
     ImGui_ImplGlfwGL3_Init(window, true);
     ImGui::StyleColorsDark();
 
-    Camera camera(1);
     LineRenderer lineRenderer(true);
-
-
+    
+    
+    IO::addKeyToCheckFor("Toggle Log Screen", { GLFW_KEY_TAB }, [&]() { Logger::toggleImGuiLogger(); },IO::OnPress, IO::KeyboardInput, true);
+    IO::addKeyToCheckFor("Pause Simulation Loop", { GLFW_KEY_LEFT_CONTROL, GLFW_KEY_P }, [&]() { dtMrg.pauseSimulation() = !dtMrg.pauseSimulation(); }, IO::OnPress, IO::KeyboardInput,false);
+    IO::addKeyToCheckFor("Toggle WireFrame", { GLFW_KEY_V }, [&]() { toggleWireFrame(); }, IO::OnPress, IO::KeyboardInput,false);
+    IO::addKeyToCheckFor("Toggle ChunkManager Debug Mode", { GLFW_KEY_LEFT_CONTROL, GLFW_KEY_C }, [&]() { ChunkManager::getIsDebugEnabled() = !ChunkManager::getIsDebugEnabled(); }, IO::OnPress, IO::KeyboardInput,false);
+    
     //RenderUtils renderUtils;
 
     InstancedRenderingOrchestrator instancedRenderer;
@@ -75,98 +75,85 @@ int RenderManager::startRenderThread() {
 
     Stopwatch<std::chrono::milliseconds> stopWatch;
     while (!glfwWindowShouldClose(window)) {
-
-       
-
         glfwPollEvents();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        //Process user peripheral input and update camera
-        processInput(window);
-        camera.update(window, glfwGetTime());
-
-
         ImGui_ImplGlfwGL3_NewFrame();
 
         /*---------------------------------------------------------------------------------------
          *                                Preformance Gui info
           ---------------------------------------------------------------------------------------*/
         //Ensure that this is rendered first thing to appear at the top of the window
-        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.3f));  // RGBA: Black with 50% opacity
-        ImGui::Begin("Right Content", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
-        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-        ImGui::Text("Simulation loop exection time: %.3f ms/iteration",dtMrg.getSimulationFrameRate());
-        if (ImGui::Button(dtMrg.pauseSimulation() ? "ON" : "OFF")) {
-            dtMrg.pauseSimulation() = !dtMrg.pauseSimulation(); // Toggle the state
-        }
-        ImGui::End();
-        ImGui::PopStyleColor();  // Restore the original background color
+        //ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.3f));  // RGBA: Black with 50% opacity
+        //ImGui::Begin("Right Content", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
+        //ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        //ImGui::Text("Simulation loop exection time: %.3f ms/iteration",dtMrg.getSimulationFrameRate());
+        //ImGui::End();
+        //ImGui::PopStyleColor();  // Restore the original background color
         //-----------------------------------------------------------------------------------------
 
 
-        
+        renderImGui(window);
 
-
-        /*---------------------------------------------------------------------------------------
-        *                                    Terrain Render
-          ---------------------------------------------------------------------------------------*/
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        CameraInfo info = camera.getCameraInfo();
-        //globe.render(model, info.view, info.projection, info.m_CameraPos);
-        //planarTerrain.render(glm::mat4(1.0f), info.view, info.projection, info.m_CameraPos);
-        terrainChunkOrchestrator.render(glm::mat4(1.0f), info.view, info.projection);
-        renderImGui(window,camera);
-
-        skybox.RenderSkyBox(info.view, info.projection);
-        //---------------------------------------------------------------------------------------
+        if (Scene::getInstance().isActiveCameraSet()) {
+            IO::processWindowUpdate(window, glfwGetTime());
+            CameraInfo info = Scene::getInstance().getActiveCamera()->getCameraInfo();
 
 
 
+            /*---------------------------------------------------------------------------------------
+            *                                    Terrain Render
+              ---------------------------------------------------------------------------------------*/
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
-        /*---------------------------------------------------------------------------------------
-        *                                 Chunk Manager Render
-          ---------------------------------------------------------------------------------------*/
-        if (ChunkManager::getIsDebugEnabled()) {
-            lineRenderer.appendLines(ChunkManager::getDebugRenderInformation(), ChunkManager::getForceRefresh());
-            lineRenderer.render(glm::mat4(1.0f), info.view, info.projection);
-        }
+            globe.render(model, info.view, info.projection, info.m_CameraPos);
+            //planarTerrain.render(glm::mat4(1.0f), info.view, info.projection, info.m_CameraPos);
+            //terrainChunkOrchestrator.render(glm::mat4(1.0f), info.view, info.projection);
+            
 
-        /*
-        * If there is a Entity currently selected render the interactable gui of the entitiy
-        */
-        if (ChunkManager::hasEntitySelected()) {
+            skybox.RenderSkyBox(info.view, info.projection);
+            //---------------------------------------------------------------------------------------
 
-            entt::entity entity = ChunkManager::getSelectedEntity();
-            std::stringstream ss;
-            ss << "Entity: " << static_cast<int>(entity);
-            ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.5f));  // RGBA: Black with 50% opacity
-            ImGui::Begin("Entity Properties");
 
-            ImGui::Text(ss.str().c_str());
-            ECS::renderEntiryGui(entity);
 
-            //Add some spacing between the content and the close button
-            ImGui::Dummy(ImVec2(0.0f, 10.0f));
-            if(ImGui::Button("Close")) {
-                ChunkManager::hasEntitySelected() = false;
+
+            /*---------------------------------------------------------------------------------------
+            *                                 Chunk Manager Render
+              ---------------------------------------------------------------------------------------*/
+            if (ChunkManager::getIsDebugEnabled()) {
+                lineRenderer.appendLines(ChunkManager::getDebugRenderInformation(), ChunkManager::getForceRefresh());
+                lineRenderer.render(glm::mat4(1.0f), info.view, info.projection);
             }
 
-            ImGui::End();
-            ImGui::PopStyleColor();  // Restore the original background color
+            /*
+            * If there is a Entity currently selected render the interactable gui of the entitiy
+            */
+            if (ChunkManager::hasEntitySelected()) {
+                ECS::Entity& entity = Scene::getInstance().getEntity(ChunkManager::getSelectedEntity());
+                std::stringstream ss;
+                ss << "Entity: " << static_cast<int>(entity.getRawEntity());
+                ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.5f));  // RGBA: Black with 50% opacity
+                ImGui::Begin("Entity Properties", &ChunkManager::hasEntitySelected());
+
+                ImGui::Text(ss.str().c_str());
+                entity.renderControls();
+
+                ImGui::End();
+                ImGui::PopStyleColor();  // Restore the original background color
+            }
+            //---------------------------------------------------------------------------------------
+
+
+
+            /*---------------------------------------------------------------------------------------
+            *                                     Entity Render
+              ---------------------------------------------------------------------------------------*/
+              //renderUtils.updateInstanceData(dtMrg.getDoubleBuffer(DataTransferTypes::TEST)->getActiveBuffer());
+              //renderUtils.render(info.view, info.projection , globe.getGlobeRenderProperties().lightPos);
+            instancedRenderer.updateAndRender(dtMrg.getDoubleBuffer(DataTransferTypes::TEST)->getActiveBuffer(), info.view, info.projection, globe.getGlobeRenderProperties().lightPos, globe.getGlobeRenderProperties().lightColor);
+            //instancedRenderer.updateAndRender(dtMrg.getDoubleBuffer(DataTransferTypes::TEST)->getActiveBuffer(), info.view, info.projection, planarTerrain.getPlanarTerrainRenderProperties().lightPos, planarTerrain.getPlanarTerrainRenderProperties().lightColor);
+            //----------------------------------------------------------------------------------------
         }
-        //---------------------------------------------------------------------------------------
-
-
-
-        /*---------------------------------------------------------------------------------------
-        *                                     Entity Render
-          ---------------------------------------------------------------------------------------*/
-        //renderUtils.updateInstanceData(dtMrg.getDoubleBuffer(DataTransferTypes::TEST)->getActiveBuffer());
-        //renderUtils.render(info.view, info.projection , globe.getGlobeRenderProperties().lightPos);
-        //instancedRenderer.updateAndRender(dtMrg.getDoubleBuffer(DataTransferTypes::TEST)->getActiveBuffer(), info.view, info.projection, globe.getGlobeRenderProperties().lightPos, globe.getGlobeRenderProperties().lightColor);
-        //instancedRenderer.updateAndRender(dtMrg.getDoubleBuffer(DataTransferTypes::TEST)->getActiveBuffer(), info.view, info.projection, planarTerrain.getPlanarTerrainRenderProperties().lightPos, planarTerrain.getPlanarTerrainRenderProperties().lightColor);
-        //----------------------------------------------------------------------------------------
-
 
 
         ImGui::Render();

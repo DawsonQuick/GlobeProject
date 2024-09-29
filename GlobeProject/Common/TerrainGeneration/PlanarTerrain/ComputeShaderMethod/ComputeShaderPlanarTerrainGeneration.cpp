@@ -7,7 +7,10 @@ ComputeShaderPlanarTerrainGeneration::ComputeShaderPlanarTerrainGeneration() {
     compileAndAttachShader(computeShaderSource);
 
     glGenBuffers(1, &ssboComputeInfo);
-    glGenBuffers(1, &ssboOutput);
+    //glGenBuffers(1, &ssboOutput);
+    glGenBuffers(1, &ssboHeightOutput);
+    glGenBuffers(1, &ssboNormalOutput);
+    glGenBuffers(1, &ssboGradientOutput);
 }
 
 
@@ -16,7 +19,10 @@ ComputeShaderPlanarTerrainGeneration::~ComputeShaderPlanarTerrainGeneration() {
     glDeleteProgram(shaderProgram);
 
     glDeleteBuffers(1, &ssboComputeInfo);
-    glDeleteBuffers(1, &ssboOutput);
+    //glDeleteBuffers(1, &ssboOutput);
+    glDeleteBuffers(1, &ssboHeightOutput);
+    glDeleteBuffers(1, &ssboNormalOutput);
+    glDeleteBuffers(1, &ssboGradientOutput);
 }
 
 //Main call point for executing the compute shader
@@ -40,9 +46,21 @@ void ComputeShaderPlanarTerrainGeneration::performOperations(ComputeTerrainGenIn
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssboComputeInfo);
 
     if (settings.chunkSize != previousChunkSize) {
-        glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssboOutput);
-        glBufferData(GL_SHADER_STORAGE_BUFFER, settings.chunkSize * settings.chunkSize * sizeof(glm::vec4), NULL, GL_DYNAMIC_DRAW);
-        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, ssboOutput);
+        //glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssboOutput);
+        //glBufferData(GL_SHADER_STORAGE_BUFFER, settings.chunkSize * settings.chunkSize * sizeof(glm::vec4), NULL, GL_DYNAMIC_DRAW);
+        //glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, ssboOutput);
+
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssboHeightOutput);
+        glBufferData(GL_SHADER_STORAGE_BUFFER, settings.chunkSize * settings.chunkSize * sizeof(float), NULL, GL_DYNAMIC_DRAW);
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, ssboHeightOutput);
+
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssboNormalOutput);
+        glBufferData(GL_SHADER_STORAGE_BUFFER, settings.chunkSize * settings.chunkSize * (4 * sizeof(int)), NULL, GL_DYNAMIC_DRAW);
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, ssboNormalOutput);
+
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssboGradientOutput);
+        glBufferData(GL_SHADER_STORAGE_BUFFER, settings.chunkSize * settings.chunkSize * (4 * sizeof(int)), NULL, GL_DYNAMIC_DRAW);
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, ssboGradientOutput);
 
 
         previousChunkSize = settings.chunkSize;
@@ -57,16 +75,33 @@ void ComputeShaderPlanarTerrainGeneration::performOperations(ComputeTerrainGenIn
 
 void ComputeShaderPlanarTerrainGeneration::unpackData(ComputeTerrainGenInfo_OUT& outData, int chunkSize) {
     // Allocate space in vectors to avoid reallocation during memcpy
-    outData.outData.reserve(chunkSize * chunkSize);
-    outData.outData.resize(chunkSize * chunkSize);
+    //outData.outData.reserve(chunkSize * chunkSize);
+   // outData.outData.resize(chunkSize * chunkSize);
+
+    outData.gradientData.reserve(chunkSize * chunkSize);
+    outData.gradientData.resize(chunkSize * chunkSize);
+
+    outData.normalData.reserve(chunkSize * chunkSize);
+    outData.normalData.resize(chunkSize * chunkSize);
+
+    outData.heightData.reserve(chunkSize * chunkSize);
+    outData.heightData.resize(chunkSize * chunkSize);
 
     outData.width = chunkSize;
     outData.height = chunkSize;
 
     // Copy height data
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssboOutput);
-    glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, (chunkSize * chunkSize) * sizeof(glm::vec4), outData.outData.data());
+    //glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssboOutput);
+    //glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, (chunkSize * chunkSize) * sizeof(glm::vec4), outData.outData.data());
 
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssboGradientOutput);
+    glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, (chunkSize * chunkSize) * (4 * sizeof(int)), outData.gradientData.data());
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssboNormalOutput);
+    glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, (chunkSize * chunkSize) * (4 * sizeof(int)), outData.normalData.data());
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssboHeightOutput);
+    glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, (chunkSize * chunkSize) * sizeof(float), outData.heightData.data());
 
 }
 
@@ -79,7 +114,7 @@ void ComputeShaderPlanarTerrainGeneration::dispatchComputeShader(size_t chunkSiz
     GLuint numWorkGroupsY = (chunkSize + 9) / 10;
 
     glDispatchCompute(numWorkGroupsX, numWorkGroupsY, 1);
-    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT | GL_BUFFER_UPDATE_BARRIER_BIT);
+    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 }
 
 // Standard template for compiling and binding the compute shader code to a buffer

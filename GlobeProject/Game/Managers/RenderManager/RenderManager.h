@@ -18,16 +18,18 @@
 #include "./../../../Common/Vendor/glm/gtc/type_ptr.hpp"
 
 
-#include "./../../../Common/Camera/Camera.h"
 #include "./../../../Common/OpenGLUtilities/LineRenderer/LineRenderer.h"
 #include "./../../../Common/OpenGLUtilities/Skybox/Skybox.h"
 
 #include "./../../../Common/ChunkManager/ChunkManager.h"
-#include "./../../../Common/ECS/Entity.h"
+#include "./../../Scene/Scene.h"
 #include "./../DataTransferManager/DataTransferManager.h"
 #include "./RenderUtils/RenderUtils.h"
 #include "./InstancedRenderingOrchestrator/InstancedRenderingOrchestrator.h"
 #include "./../../Terrain/TerrainChunkOrchestrator/TerrainChunkOrchestrator.h"
+
+#include "./../../../Common/IO/IO.h"
+
 class RenderManager
 {
 

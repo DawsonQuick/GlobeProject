@@ -19,21 +19,31 @@ void TerrainChunkOrchestrator::render(glm::mat4 model, glm::mat4 view, glm::mat4
 	static float maxTessDistance = 10000;
 	static float steepnessValue = 0.5;
 
+	float generationTotalTime = 0.0f; //ms
+	float processAndSetupTotalTime = 0.0f; //ms
+
 	if (!isInstanceSet) {
 		ComputeShaderPlanarTerrainGeneration tempTerrainGenerator;
 		
-		for (int j = 0; j < 16; j++) {
-			for (int i = 0; i < 16; i++) {
-				ComputeTerrainGenInfo_IN inData(69420, 512, j, i, 1000, 5, 50.0f, 0.25f, 0.0001f, 4.5f, 100.0f);
+		for (int j = 0; j < 4; j++) {
+			for (int i = 0; i < 4; i++) {
+				stopWatchA.start();
+				ComputeTerrainGenInfo_IN inData(69420, 512, j, i, 1000, 5, 100.0f, 0.25f, 0.0001f, 3.5f, 100.0f);
 				ComputeTerrainGenInfo_OUT outdata;
 				tempTerrainGenerator.performOperations(inData, outdata);
+				generationTotalTime += stopWatchA.stopReturn();
+				stopWatchB.start();
 				std::unique_ptr<ChunkInstance> tmp = std::make_unique<ChunkInstance>(outdata, inData.xOffset, inData.yOffset);
 				instances.push_back(std::move(tmp));
 				outdata.free();
+				processAndSetupTotalTime += stopWatchB.stopReturn();
 			}
 		}
 		tempTerrainGenerator.~ComputeShaderPlanarTerrainGeneration();
 		isInstanceSet = true;
+
+		LOG_MESSAGE(LogLevel::INFO, "Total Generation time: " + std::to_string(generationTotalTime) + " ms");
+		LOG_MESSAGE(LogLevel::INFO, "Total process and setup time: " + std::to_string(processAndSetupTotalTime) + " ms");
 	}
 
 	if (isInstanceSet) {
@@ -48,12 +58,14 @@ void TerrainChunkOrchestrator::render(glm::mat4 model, glm::mat4 view, glm::mat4
 				glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 			
 				glUniform1i(glGetUniformLocation(m_ShaderProgram,"heightMap"), 0);
+				glUniform1i(glGetUniformLocation(m_ShaderProgram,"normalMap"), 1);
+				glUniform1i(glGetUniformLocation(m_ShaderProgram,"gradientMap"), 2);
 				glUniform1i(glGetUniformLocation(m_ShaderProgram, "minTessLevel"), minTessLevel);
 				glUniform1i(glGetUniformLocation(m_ShaderProgram, "maxTessLevel"), maxTessLevel);
 				glUniform1f(glGetUniformLocation(m_ShaderProgram, "minTessDistance"), minTessDistance);
 				glUniform1f(glGetUniformLocation(m_ShaderProgram, "maxTessDistance"), maxTessDistance);
 				glUniform1f(glGetUniformLocation(m_ShaderProgram, "steepnessValue"), steepnessValue);
-				glActiveTexture(GL_TEXTURE0);
+				
 			for (int i = 0; i < instances.size(); i++) {
 				auto& instance = instances[i];
 				instance->render();

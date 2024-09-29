@@ -4,10 +4,21 @@
 
 #include "./../../../../Common/Vendor/glm/glm.hpp"
 #include "./../AssimpLoader/AssimpLoader.h"
-#include "./../../../ECS/Entity.h"
 #include <vector>
+struct ModelBoundingBox {
+    glm::vec3 RBT;
+    glm::vec3 RBB;
+    glm::vec3 RFT;
+    glm::vec3 RFB;
 
-inline std::vector<float> generateEdges(const BoundingBoxComponent& bbox) {
+    glm::vec3 LBT;
+    glm::vec3 LBB;
+    glm::vec3 LFT;
+    glm::vec3 LFB;
+
+};
+
+inline std::vector<float> generateEdges(const ModelBoundingBox& bbox) {
     std::vector<float> edges;
 
     auto addEdge = [&](const glm::vec3& start, const glm::vec3& end) {
@@ -34,8 +45,8 @@ inline std::vector<float> generateEdges(const BoundingBoxComponent& bbox) {
     return edges;
 }
 
-inline BoundingBoxComponent calculateBoundingBox(const std::vector<Vertex>& tmpVertices) {
-    BoundingBoxComponent newBoundingBox;
+inline ModelBoundingBox calculateBoundingBox(const std::vector<Vertex>& tmpVertices) {
+    ModelBoundingBox newBoundingBox;
     bool firstPass = true;
     float minX = 0.0f;
     float maxX = 0.0f;
@@ -87,7 +98,7 @@ inline BoundingBoxComponent calculateBoundingBox(const std::vector<Vertex>& tmpV
     return newBoundingBox;
 }
 
-inline BoundingBoxComponent calculateBoundingBox(const std::vector<float>& vertices, size_t setSize = 8, size_t valuesToExtract = 3) {
+inline ModelBoundingBox calculateBoundingBox(const std::vector<float>& vertices, size_t setSize = 8, size_t valuesToExtract = 3) {
     // Ensure the input vector size is a multiple of the set size
     if (vertices.size() % setSize != 0) {
         throw std::runtime_error("Input vector size must be a multiple of the set size.");

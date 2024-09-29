@@ -5,16 +5,17 @@
 #include <vector>
 #include <map>
 #include <functional>
-
+#include <mutex>
 #include "./ModelLoading/AssimpLoader/AssimpLoader.h"
-#include "./../OpenGLUtilities/LineRenderer/LineRenderer.h"
 #include "./ModelLoading/BoundingBox/BoundingBoxGeneration.h"
-#include "./../ECS/Entity.h"
+
+
+
 struct Model {
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
 
-	BoundingBoxComponent boundingBox;
+	ModelBoundingBox boundingBox;
 };
 namespace {
 	inline int stringToID(const std::string& str) {

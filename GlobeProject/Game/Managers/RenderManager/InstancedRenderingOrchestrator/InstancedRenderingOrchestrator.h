@@ -7,6 +7,7 @@
 #include <memory>
 #include "./../RenderUtils/RenderUtils.h"
 #include "./../../../../Common/Logger/Logger.h"
+#include "./../../../../Common/ECS/ECSWrapper.h"
 
 class InstancedRenderingOrchestrator {
 public:

@@ -5,7 +5,7 @@
 #include "./../../../Common/Vendor/imgui/imgui.h"
 #include "./../DataTransferManager/DataTransferManager.h"
 #include "./../../../Common/Utilities/OrbitalCalculation/SphericalOrbit/SphericalOrbitCalculator.h"
-#include "./../../../Common/ECS/Entity.h"
+#include "./../../Scene/Scene.h"
 #include "./../../../Common/Stopwatch/Stopwatch.h"
 #include "./../../../Common/ModelManager/ModelManager.h"
 #include "./../../../Common/SphereGeneration/SphereGeneration.h"

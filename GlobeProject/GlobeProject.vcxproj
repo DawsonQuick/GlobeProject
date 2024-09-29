@@ -142,8 +142,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Common\Camera\CameraTypes\FreeCam\FreeCam.cpp" />
+    <ClCompile Include="Common\Camera\CameraTypes\OrbitalCam\OrbitalCam.cpp" />
     <ClCompile Include="Common\ChunkManager\ChunkManager.cpp" />
     <ClCompile Include="Common\ECS\Systems\ECSRegistry\Registry.cpp" />
+    <ClCompile Include="Common\IO\Input\Input.cpp" />
     <ClCompile Include="Common\Logger\Logger.cpp" />
     <ClCompile Include="Common\ModelManager\ModelLoading\AssimpLoader\AssimpLoader.cpp" />
     <ClCompile Include="Common\Camera\Camera.cpp" />
@@ -158,12 +161,12 @@
     <ClCompile Include="Common\Vendor\imgui\imgui_draw.cpp" />
     <ClCompile Include="Common\Vendor\imgui\imgui_impl_glfw_gl3.cpp" />
     <ClCompile Include="Common\Vendor\imgui\main.cpp" />
-    <ClCompile Include="Common\OpenGLUtilities\ComputeShader\ComputeShader.cpp" />
     <ClCompile Include="Common\Vendor\stb_image\stb_image.cpp" />
     <ClCompile Include="Common\Vendor\stb_image\stb_image_write.cpp" />
     <ClCompile Include="Game\Managers\DataTransferManager\DataTransferManager.cpp" />
     <ClCompile Include="Game\Managers\RenderManager\InstancedRenderingOrchestrator\InstancedRenderingOrchestrator.cpp" />
     <ClCompile Include="Game\Managers\RenderManager\RenderUtils\RenderUtils.cpp" />
+    <ClCompile Include="Game\Scene\Scene.cpp" />
     <ClCompile Include="Game\Terrain\Globe\Globe.cpp" />
     <ClCompile Include="Game\Terrain\Planar\Planar.cpp" />
     <ClCompile Include="Game\Terrain\TerrainChunkOrchestrator\ChunkInstance\ChunkInstance.cpp" />
@@ -173,12 +176,19 @@
     <ClCompile Include="Game\Managers\SimulationManager\SimulationManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Common\Camera\CameraDataStructs\CameraDataStructs.h" />
+    <ClInclude Include="Common\Camera\CameraTypes\CameraTypeInterface.h" />
+    <ClInclude Include="Common\Camera\CameraTypes\FreeCam\FreeCam.h" />
+    <ClInclude Include="Common\Camera\CameraTypes\OrbitalCam\OrbitalCam.h" />
     <ClInclude Include="Common\ChunkManager\ChunkManager.h" />
     <ClInclude Include="Common\ECS\Components\Components.h" />
-    <ClInclude Include="Common\ECS\Entity.h" />
+    <ClInclude Include="Common\ECS\ECSWrapper.h" />
     <ClInclude Include="Common\ECS\Systems\ECSRegistry\Registry.h" />
     <ClInclude Include="Common\ECS\Systems\Systems.h" />
     <ClInclude Include="Common\ECS\Systems\TestComputeShader.h" />
+    <ClInclude Include="Common\IO\Input\Input.h" />
+    <ClInclude Include="Common\IO\IO.h" />
+    <ClInclude Include="Common\IO\sharedIOData.h" />
     <ClInclude Include="Common\Logger\Logger.h" />
     <ClInclude Include="Common\ModelManager\ModelLoading\AssimpLoader\AssimpLoader.h" />
     <ClInclude Include="Common\Camera\Camera.h" />
@@ -188,6 +198,7 @@
     <ClInclude Include="Common\OpenGLUtilities\LineRenderer\LineRenderer.h" />
     <ClInclude Include="Common\OpenGLUtilities\Skybox\Skybox.h" />
     <ClInclude Include="Common\OpenGLUtilities\UniveralStructs.h" />
+    <ClInclude Include="Common\Serialization\SerializationUtils.h" />
     <ClInclude Include="Common\SphereGeneration\SphereGeneration.h" />
     <ClInclude Include="Common\TerrainGeneration\PlanarTerrain\ComputeShaderMethod\ComputeShaderPlanarTerrainGeneration.h" />
     <ClInclude Include="Common\TerrainGeneration\PlanarTerrain\PlanarTerrain.h" />
@@ -441,11 +452,15 @@
     <ClInclude Include="Common\Vendor\stb_image\stb_image_write.h" />
     <ClInclude Include="Common\WorldInteraction\CommonDataStrutures\CommonDataStructures.h" />
     <ClInclude Include="Common\WorldInteraction\WorldInteraction.h" />
-    <ClInclude Include="Common\OpenGLUtilities\ComputeShader\ComputeShader.h" />
+    <ClInclude Include="Game\MainImGuiComponents\GuiLogger\GuiLogger.h" />
+    <ClInclude Include="Game\MainImGuiComponents\KeyBindComponentWindow\KeyBindComponentWindow.h" />
+    <ClInclude Include="Game\MainImGuiComponents\Menu\Menu.h" />
     <ClInclude Include="Game\Managers\DataTransferManager\DataTransferManager.h" />
     <ClInclude Include="Game\MainImGuiComponents\MainImGuiRender.h" />
     <ClInclude Include="Game\Managers\RenderManager\InstancedRenderingOrchestrator\InstancedRenderingOrchestrator.h" />
     <ClInclude Include="Game\Managers\RenderManager\RenderUtils\RenderUtils.h" />
+    <ClInclude Include="Game\Scene\Scene.h" />
+    <ClInclude Include="Game\Scene\SceneGui\SceneGui.h" />
     <ClInclude Include="Game\Terrain\Globe\Globe.h" />
     <ClInclude Include="Game\Managers\RenderManager\RenderManager.h" />
     <ClInclude Include="Game\Managers\SimulationManager\SimulationManager.h" />

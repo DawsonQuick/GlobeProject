@@ -66,6 +66,8 @@ namespace Logger {
 
 	inline LogLevel activeLoggingLevel = LogLevel::INFO;
 
+	inline bool displayImGuiLogger = false;
+
 	inline std::deque<std::string> getLogger() {
 		std::lock_guard<std::mutex> lock(loggerMutex);
 		return logList.get();
@@ -78,6 +80,14 @@ namespace Logger {
 	inline void updateLogCapacity() {
 		std::lock_guard<std::mutex> lock(loggerMutex);
 		logList.updateCapacity(currentCapacity);
+	}
+
+	inline bool& isDisplayImGuiLogger() {
+		return displayImGuiLogger;
+	}
+
+	inline void toggleImGuiLogger() {
+		displayImGuiLogger = !displayImGuiLogger;
 	}
 
 	inline std::string getStringLogLevel(int i) {

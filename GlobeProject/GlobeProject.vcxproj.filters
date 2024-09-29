@@ -15,7 +15,6 @@
     <ClCompile Include="Common\ModelManager\ModelLoading\AssimpLoader\AssimpLoader.cpp" />
     <ClCompile Include="Common\ModelManager\ModelManager.cpp" />
     <ClCompile Include="Common\ECS\Systems\ECSRegistry\Registry.cpp" />
-    <ClCompile Include="Common\OpenGLUtilities\ComputeShader\ComputeShader.cpp" />
     <ClCompile Include="Common\Utilities\ThreadPool\ThreadPool.cpp" />
     <ClCompile Include="Common\OpenGLUtilities\LineRenderer\LineRenderer.cpp" />
     <ClCompile Include="Game\Managers\RenderManager\RenderUtils\RenderUtils.cpp" />
@@ -30,6 +29,10 @@
     <ClCompile Include="Common\Vendor\stb_image\stb_image_write.cpp" />
     <ClCompile Include="Game\Terrain\TerrainChunkOrchestrator\TerrainChunkOrchestrator.cpp" />
     <ClCompile Include="Game\Terrain\TerrainChunkOrchestrator\ChunkInstance\ChunkInstance.cpp" />
+    <ClCompile Include="Common\IO\Input\Input.cpp" />
+    <ClCompile Include="Common\Camera\CameraTypes\FreeCam\FreeCam.cpp" />
+    <ClCompile Include="Common\Camera\CameraTypes\OrbitalCam\OrbitalCam.cpp" />
+    <ClCompile Include="Game\Scene\Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Common">
@@ -297,11 +300,10 @@
     <ClInclude Include="Common\ModelManager\ModelLoading\BoundingBox\BoundingBoxGeneration.h" />
     <ClInclude Include="Common\WorldInteraction\WorldInteraction.h" />
     <ClInclude Include="Common\WorldInteraction\CommonDataStrutures\CommonDataStructures.h" />
-    <ClInclude Include="Common\ECS\Entity.h" />
+    <ClInclude Include="Common\ECS\ECSWrapper.h" />
     <ClInclude Include="Common\ECS\Components\Components.h" />
     <ClInclude Include="Common\ECS\Systems\Systems.h" />
     <ClInclude Include="Common\ECS\Systems\ECSRegistry\Registry.h" />
-    <ClInclude Include="Common\OpenGLUtilities\ComputeShader\ComputeShader.h" />
     <ClInclude Include="Common\ECS\Systems\TestComputeShader.h" />
     <ClInclude Include="Common\Utilities\ThreadPool\ThreadPool.h" />
     <ClInclude Include="Common\OpenGLUtilities\LineRenderer\LineRenderer.h" />
@@ -323,6 +325,19 @@
     <ClInclude Include="Game\Terrain\TerrainChunkOrchestrator\ChunkInstance\ChunkInstance.h" />
     <ClInclude Include="Game\Terrain\TerrainChunkOrchestrator\Utils\ChunkUtils.h" />
     <ClInclude Include="Game\Terrain\TerrainChunkOrchestrator\GuiInterface\TerrainChunkGuiInterface.h" />
+    <ClInclude Include="Common\IO\IO.h" />
+    <ClInclude Include="Common\IO\Input\Input.h" />
+    <ClInclude Include="Common\IO\sharedIOData.h" />
+    <ClInclude Include="Game\MainImGuiComponents\KeyBindComponentWindow\KeyBindComponentWindow.h" />
+    <ClInclude Include="Game\MainImGuiComponents\Menu\Menu.h" />
+    <ClInclude Include="Game\MainImGuiComponents\GuiLogger\GuiLogger.h" />
+    <ClInclude Include="Common\Camera\CameraDataStructs\CameraDataStructs.h" />
+    <ClInclude Include="Common\Camera\CameraTypes\FreeCam\FreeCam.h" />
+    <ClInclude Include="Common\Camera\CameraTypes\CameraTypeInterface.h" />
+    <ClInclude Include="Common\Camera\CameraTypes\OrbitalCam\OrbitalCam.h" />
+    <ClInclude Include="Game\Scene\Scene.h" />
+    <ClInclude Include="Game\Scene\SceneGui\SceneGui.h" />
+    <ClInclude Include="Common\Serialization\SerializationUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Common\Vendor\glm\detail\func_common.inl" />
