@@ -54,7 +54,7 @@ void SimulationManager::startSimulationThread() {
 			return;
 		}
 		totalSuccess++;
-		for (int i = 0; i < 250; i++) {
+		for (int i = 0; i < 50; i++) {
 			totalVertices += vertices.size();
 			totalIndices += indices.size();
 

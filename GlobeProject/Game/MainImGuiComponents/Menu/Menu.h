@@ -1,7 +1,7 @@
 #pragma once
 #include "./../KeyBindComponentWindow/KeyBindComponentWindow.h"
 #include "./../../Scene/SceneGui/SceneGui.h"
-
+#include "./../../../Common/AudioManager/AudioManager.h"
 namespace {
     static bool showKeyBindWindow = false;
     static bool showSceneWindow = false;
@@ -19,7 +19,7 @@ inline void renderMenu(GLFWwindow* window) {
 
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
-            if (ImGui::MenuItem("Exit", "Ctrl+Q")) { glfwSetWindowShouldClose(window, GLFW_TRUE); }
+            if (ImGui::MenuItem("Exit", "Ctrl+Q")) { glfwSetWindowShouldClose(window, GLFW_TRUE); AudioManager::stop(); }
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Settings")) {

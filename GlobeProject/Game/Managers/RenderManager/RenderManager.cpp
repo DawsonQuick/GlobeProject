@@ -46,6 +46,8 @@ int RenderManager::startRenderThread() {
     }
     glEnable(GL_DEPTH_TEST);
 
+    Scene::getInstance().setSceneWindow(window);
+
     Globe globe;
     globe.generate();
 
@@ -65,7 +67,9 @@ int RenderManager::startRenderThread() {
     IO::addKeyToCheckFor("Pause Simulation Loop", { GLFW_KEY_LEFT_CONTROL, GLFW_KEY_P }, [&]() { dtMrg.pauseSimulation() = !dtMrg.pauseSimulation(); }, IO::OnPress, IO::KeyboardInput,false);
     IO::addKeyToCheckFor("Toggle WireFrame", { GLFW_KEY_V }, [&]() { toggleWireFrame(); }, IO::OnPress, IO::KeyboardInput,false);
     IO::addKeyToCheckFor("Toggle ChunkManager Debug Mode", { GLFW_KEY_LEFT_CONTROL, GLFW_KEY_C }, [&]() { ChunkManager::getIsDebugEnabled() = !ChunkManager::getIsDebugEnabled(); }, IO::OnPress, IO::KeyboardInput,false);
-    
+    IO::addKeyToCheckFor("Play Test Audio", { GLFW_KEY_LEFT_CONTROL , GLFW_KEY_LEFT_SHIFT, GLFW_KEY_A }, [&]() {AudioManager::playSound("./Resources/Audio/WeaponHit.mp3"); }, IO::OnPress, IO::KeyboardInput, false);
+    IO::addKeyToCheckFor("Play Test Audio2", { GLFW_KEY_LEFT_CONTROL , GLFW_KEY_LEFT_SHIFT, GLFW_KEY_F }, [&]() {AudioManager::playSound("./Resources/Audio/Fireball.mp3"); }, IO::OnPress, IO::KeyboardInput, false);
+
     //RenderUtils renderUtils;
 
     InstancedRenderingOrchestrator instancedRenderer;
@@ -83,12 +87,12 @@ int RenderManager::startRenderThread() {
          *                                Preformance Gui info
           ---------------------------------------------------------------------------------------*/
         //Ensure that this is rendered first thing to appear at the top of the window
-        //ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.3f));  // RGBA: Black with 50% opacity
-        //ImGui::Begin("Right Content", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
-        //ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-        //ImGui::Text("Simulation loop exection time: %.3f ms/iteration",dtMrg.getSimulationFrameRate());
-        //ImGui::End();
-        //ImGui::PopStyleColor();  // Restore the original background color
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.3f));  // RGBA: Black with 50% opacity
+        ImGui::Begin("Right Content", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        ImGui::Text("Simulation loop exection time: %.3f ms/iteration",dtMrg.getSimulationFrameRate());
+        ImGui::End();
+        ImGui::PopStyleColor();  // Restore the original background color
         //-----------------------------------------------------------------------------------------
 
 
@@ -106,7 +110,7 @@ int RenderManager::startRenderThread() {
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
-            globe.render(model, info.view, info.projection, info.m_CameraPos);
+            globe.render(lineRenderer,model, info.view, info.projection, info.m_CameraPos);
             //planarTerrain.render(glm::mat4(1.0f), info.view, info.projection, info.m_CameraPos);
             //terrainChunkOrchestrator.render(glm::mat4(1.0f), info.view, info.projection);
             

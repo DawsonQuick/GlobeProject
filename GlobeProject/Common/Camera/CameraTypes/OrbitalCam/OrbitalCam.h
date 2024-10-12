@@ -12,7 +12,7 @@ public:
 
 private:
 	bool m_FirstMouse, m_trackingEnabled;
-	float m_Yaw, m_Pitch, m_LastX, m_LastY;
+	float m_LastX, m_LastY;
 	float m_Radius;
 	double m_MouseX, m_MouseY;
 	GLFWwindow* window;

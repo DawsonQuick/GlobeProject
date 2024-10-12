@@ -154,6 +154,10 @@
     <ClCompile Include="Common\OpenGLUtilities\LineRenderer\LineRenderer.cpp" />
     <ClCompile Include="Common\OpenGLUtilities\Skybox\Skybox.cpp" />
     <ClCompile Include="Common\TerrainGeneration\PlanarTerrain\ComputeShaderMethod\ComputeShaderPlanarTerrainGeneration.cpp" />
+    <ClCompile Include="Common\Terrain\InstancedTerrain\InstancedTerrain.cpp" />
+    <ClCompile Include="Common\Terrain\StaticTerrain\StaticTerrain.cpp" />
+    <ClCompile Include="Common\Terrain\TerrainManager.cpp" />
+    <ClCompile Include="Common\Terrain\TerrainUtils\TerrainUtils.cpp" />
     <ClCompile Include="Common\Utilities\PerlinNoise\PerlinNoise.cpp" />
     <ClCompile Include="Common\Utilities\ThreadPool\ThreadPool.cpp" />
     <ClCompile Include="Common\Vendor\imgui\imgui.cpp" />
@@ -167,6 +171,7 @@
     <ClCompile Include="Game\Managers\RenderManager\InstancedRenderingOrchestrator\InstancedRenderingOrchestrator.cpp" />
     <ClCompile Include="Game\Managers\RenderManager\RenderUtils\RenderUtils.cpp" />
     <ClCompile Include="Game\Scene\Scene.cpp" />
+    <ClCompile Include="Game\Scene\SceneUtils\SceneUtils.cpp" />
     <ClCompile Include="Game\Terrain\Globe\Globe.cpp" />
     <ClCompile Include="Game\Terrain\Planar\Planar.cpp" />
     <ClCompile Include="Game\Terrain\TerrainChunkOrchestrator\ChunkInstance\ChunkInstance.cpp" />
@@ -176,6 +181,7 @@
     <ClCompile Include="Game\Managers\SimulationManager\SimulationManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Common\AudioManager\AudioManager.h" />
     <ClInclude Include="Common\Camera\CameraDataStructs\CameraDataStructs.h" />
     <ClInclude Include="Common\Camera\CameraTypes\CameraTypeInterface.h" />
     <ClInclude Include="Common\Camera\CameraTypes\FreeCam\FreeCam.h" />
@@ -202,10 +208,10 @@
     <ClInclude Include="Common\SphereGeneration\SphereGeneration.h" />
     <ClInclude Include="Common\TerrainGeneration\PlanarTerrain\ComputeShaderMethod\ComputeShaderPlanarTerrainGeneration.h" />
     <ClInclude Include="Common\TerrainGeneration\PlanarTerrain\PlanarTerrain.h" />
-    <ClInclude Include="Common\Units\Coordinates\Coordinates.h" />
-    <ClInclude Include="Common\Units\Distance\Metric\MetricDistance.h" />
-    <ClInclude Include="Common\Units\Speed\Speed.h" />
-    <ClInclude Include="Common\Units\Time\Time.h" />
+    <ClInclude Include="Common\Terrain\InstancedTerrain\InstancedTerrain.h" />
+    <ClInclude Include="Common\Terrain\StaticTerrain\StaticTerrain.h" />
+    <ClInclude Include="Common\Terrain\TerrainManager.h" />
+    <ClInclude Include="Common\Terrain\TerrainUtils\TerrainUtils.h" />
     <ClInclude Include="Common\Utilities\CappedDeque\CappedDeque.h" />
     <ClInclude Include="Common\Utilities\DoubleBuffer\DoubleBuffer.h" />
     <ClInclude Include="Common\Utilities\LockFreeMap\LockFreeMap.h" />
@@ -440,7 +446,7 @@
     <ClInclude Include="Common\Vendor\glm\vec3.hpp" />
     <ClInclude Include="Common\Vendor\glm\vec4.hpp" />
     <ClInclude Include="Common\Vendor\glm\vector_relational.hpp" />
-    <ClInclude Include="Common\Stopwatch\Stopwatch.h" />
+    <ClInclude Include="Common\Utilities\Stopwatch\Stopwatch.h" />
     <ClInclude Include="Common\Vendor\imgui\imconfig.h" />
     <ClInclude Include="Common\Vendor\imgui\imgui.h" />
     <ClInclude Include="Common\Vendor\imgui\imgui_impl_glfw_gl3.h" />
@@ -461,6 +467,7 @@
     <ClInclude Include="Game\Managers\RenderManager\RenderUtils\RenderUtils.h" />
     <ClInclude Include="Game\Scene\Scene.h" />
     <ClInclude Include="Game\Scene\SceneGui\SceneGui.h" />
+    <ClInclude Include="Game\Scene\SceneUtils\SceneUtils.h" />
     <ClInclude Include="Game\Terrain\Globe\Globe.h" />
     <ClInclude Include="Game\Managers\RenderManager\RenderManager.h" />
     <ClInclude Include="Game\Managers\SimulationManager\SimulationManager.h" />
@@ -600,6 +607,10 @@
     <Image Include="Resources\Skybox\Skybox1\left.png" />
     <Image Include="Resources\Skybox\Skybox1\right.png" />
     <Image Include="Resources\Skybox\Skybox1\top.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="Resources\Audio\Fireball.mp3" />
+    <Media Include="Resources\Audio\WeaponHit.mp3" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

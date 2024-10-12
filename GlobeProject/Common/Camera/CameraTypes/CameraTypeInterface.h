@@ -15,10 +15,6 @@ public:
 		return m_CameraInfo;
 	}
 
-	void serialize() {
-
-	}
-
 protected:
 	CameraInfo m_CameraInfo;
 };

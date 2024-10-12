@@ -3,13 +3,14 @@
 #define GLOBE_H
 #include <iostream>
 #include <GL/glew.h>
-#include "./../../../Common/Stopwatch/Stopwatch.h"
+#include "./../../../Common/Utilities/Stopwatch/Stopwatch.h"
 #include "./../../../Common/SphereGeneration/SphereGeneration.h"
 #include "./../../../Common/Vendor/glm/glm.hpp"
 #include "./../../../Common/Vendor/glm/gtc/matrix_transform.hpp"
 #include "./../../../Common/Vendor/glm/gtc/type_ptr.hpp"
 #include "./../../../Common/ModelManager/ModelLoading/BoundingBox/BoundingBoxGeneration.h"
 #include "./../../../Common/ChunkManager/ChunkManager.h"
+#include "./../../../Common/Terrain/TerrainUtils/TerrainUtils.h"
 #include "./../../../Common/Logger/Logger.h"
 
 struct GlobeRenderProperties {
@@ -30,7 +31,7 @@ public:
 	Globe();
 	~Globe();
 	void generate();
-	void render(glm::mat4 model, glm::mat4 view, glm::mat4 projection, glm::vec3 viewPos);
+	void render(LineRenderer& render, glm::mat4 model, glm::mat4 view, glm::mat4 projection, glm::vec3 viewPos);
     BoundingBox& getBoundingBoxInfo();
     GlobeRenderProperties& getGlobeRenderProperties();
 private:
@@ -47,6 +48,7 @@ private:
     unsigned int compileShader(unsigned int type, const char* source);
     unsigned int createShaderProgram();
 
+    BVHNode* bvhNode;
     
     const char* vertexShaderSource = R"(
 #version 330 core

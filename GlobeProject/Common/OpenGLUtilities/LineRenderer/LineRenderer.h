@@ -6,7 +6,7 @@
 #include "./../../Vendor/glm/glm.hpp"
 #include "./../../Vendor/glm/gtc/matrix_transform.hpp"
 #include "./../../Vendor/glm/gtc/type_ptr.hpp"
-#include "./../../Stopwatch/Stopwatch.h"
+#include "./../../Utilities/Stopwatch/Stopwatch.h"
 class LineRenderer {
 public:
     LineRenderer(bool isColorsEmbdedded);

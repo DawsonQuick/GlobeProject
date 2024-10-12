@@ -1,6 +1,6 @@
 #pragma once
 #include "./../Scene.h"
-
+#include "./../SceneUtils/SceneUtils.h"
 //This file will include all the ImGui related to managing the scene directly and all objects within
 
 /*
@@ -46,6 +46,15 @@ namespace {
 inline void renderSceneGui(GLFWwindow* window){
 	ImGui::Text("TODO: Render Scene window");
     if (ImGui::BeginMenuBar()) {
+        if (ImGui::BeginMenu("File")) {
+            if (ImGui::MenuItem("Export Scene")) {
+                SceneUtils::exportScene("Text.bin");
+            }
+            if (ImGui::MenuItem("Import Scene")) {
+                SceneUtils::importScene("Text.bin");
+            }
+            ImGui::EndMenu();
+        }
         if (ImGui::BeginMenu("Add")) {
                 if (ImGui::BeginMenu("Camera")) {
                     if (ImGui::MenuItem("Orbital")) {
@@ -59,6 +68,13 @@ inline void renderSceneGui(GLFWwindow* window){
 
             ImGui::EndMenu();
         }
+        if (ImGui::BeginMenu("Clear Scene")) {
+            Scene::getInstance().clear();
+
+            ImGui::EndMenu();
+        }
+
+
         ImGui::EndMenuBar();
     }
 

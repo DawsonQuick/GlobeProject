@@ -6,7 +6,7 @@
 #include <chrono>
 #include <execution>
 #include "./../Components/Components.h"
-#include "./../../Stopwatch/Stopwatch.h"
+#include "./../../Utilities/Stopwatch/Stopwatch.h"
 #include "./../../OpenGLUtilities/UniveralStructs.h"
 #include "./ECSRegistry/Registry.h"
 #include "TestComputeShader.h"

@@ -2,7 +2,7 @@
 #include "OrbitalCam.h"
 
 OrbitalCam::OrbitalCam(GLFWwindow* window):
-m_Yaw(-90.0f), m_Pitch(0), m_FirstMouse(true),
+m_FirstMouse(true),
 m_LastX(1920.0f / 2.0f), m_LastY(1080.0f / 2.0f),
 m_Radius(20000.0f), m_CentralPoint(0.0f, 0.0f, 0.0f),
 m_Pressed(false), window(window)
@@ -45,11 +45,11 @@ void OrbitalCam::mouse_Dragcallback()
     xoffset *= sensitivity;
     yoffset *= sensitivity;
 
-    m_Yaw += xoffset;
-    m_Pitch += yoffset;
+    m_CameraInfo.m_Yaw += xoffset;
+    m_CameraInfo.m_Pitch += yoffset;
 
-    if (m_Pitch > 89.0f) m_Pitch = 89.0f;
-    if (m_Pitch < -89.0f) m_Pitch = -89.0f;
+    if (m_CameraInfo.m_Pitch > 89.0f) m_CameraInfo.m_Pitch = 89.0f;
+    if (m_CameraInfo.m_Pitch < -89.0f) m_CameraInfo.m_Pitch = -89.0f;
 
     updateCameraVectors();
 }
@@ -57,9 +57,9 @@ void OrbitalCam::mouse_Dragcallback()
 void OrbitalCam::updateCameraVectors() {
     // Calculate the new camera position
     glm::vec3 position;
-    position.x = m_CentralPoint.x + m_Radius * cos(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
-    position.y = m_CentralPoint.y + m_Radius * sin(glm::radians(m_Pitch));
-    position.z = m_CentralPoint.z + m_Radius * sin(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
+    position.x = m_CentralPoint.x + m_Radius * cos(glm::radians(m_CameraInfo.m_Yaw)) * cos(glm::radians(m_CameraInfo.m_Pitch));
+    position.y = m_CentralPoint.y + m_Radius * sin(glm::radians(m_CameraInfo.m_Pitch));
+    position.z = m_CentralPoint.z + m_Radius * sin(glm::radians(m_CameraInfo.m_Yaw)) * cos(glm::radians(m_CameraInfo.m_Pitch));
 
     m_CameraInfo.m_CameraPos = position;
     // Camera front vector always looks at the central point

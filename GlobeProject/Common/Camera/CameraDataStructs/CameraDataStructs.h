@@ -27,6 +27,10 @@ struct CameraInfo {
 	CameraType type;
 	bool isRaySet;
 	Ray ray;
+
+	float m_Yaw;
+	float m_Pitch;
+
 	CameraInfo() {}
 
 
@@ -62,6 +66,9 @@ struct CameraInfo {
 		}
 
 		serializePrimitive(buffer, type);
+		serializePrimitive(buffer, m_Yaw);
+		serializePrimitive(buffer, m_Pitch);
+
 	}
 
 	static CameraInfo deserialize(const std::vector<std::byte>& buffer) {
@@ -98,6 +105,8 @@ struct CameraInfo {
 		}
 
 		deserializePrimitive(buffer, offset, info.type);
+		deserializePrimitive(buffer, offset, info.m_Yaw);
+		deserializePrimitive(buffer, offset, info.m_Pitch);
 
 		return info;
 

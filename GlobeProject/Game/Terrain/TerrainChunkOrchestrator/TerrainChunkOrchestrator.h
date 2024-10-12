@@ -5,7 +5,7 @@
 #include "ChunkInstance/ChunkInstance.h"
 #include "./../../../Common/ChunkManager/ChunkManager.h"
 #include "GuiInterface/TerrainChunkGuiInterface.h"
-#include "./../../../Common/Stopwatch/Stopwatch.h"
+#include "./../../../Common/Utilities/Stopwatch/Stopwatch.h"
 #include <memory>
 class TerrainChunkOrchestrator {
 public:

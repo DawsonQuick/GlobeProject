@@ -10,7 +10,7 @@
 #include <entt/entt.hpp>
 #include "./../Components/Components.h"
 #include "./ECSRegistry/Registry.h"
-#include "./../../Stopwatch/Stopwatch.h"
+#include "./../../Utilities/Stopwatch/Stopwatch.h"
 #include "./../../OpenGLUtilities/UniveralStructs.h"
 #include "./../../ChunkManager/ChunkManager.h"
 

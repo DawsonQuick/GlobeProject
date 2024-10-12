@@ -10,7 +10,7 @@
 #include "./../../Common/ECS/Systems/ECSRegistry/Registry.h"
 #include "./../../Common/Logger/Logger.h"
 #include "./../../Common/TerrainGeneration/PlanarTerrain/ComputeShaderMethod/ComputeShaderPlanarTerrainGeneration.h"
-#include "./../../Common/Stopwatch/Stopwatch.h"
+#include "./../../Common/Utilities/Stopwatch/Stopwatch.h"
 #include <algorithm> // For std::find
 
 // Hash function for glm::ivec3
@@ -258,6 +258,12 @@ namespace ChunkManager {
             generateChunkRenderBoundingBox(allChunkBoundingBoxes, chunk, glm::vec3(1.0, 1.0, 1.0));
             chunkToEntityMap[chunk] = std::vector<entt::entity>{ entity };
         }
+    }
+
+    inline void clearEntityToChunkMap() {
+        isEntitySelected = false;
+        chunkToEntityMap.clear();
+        debugRenderInformation.clear();
     }
     //---------------------------------------------------------------------------------------------------------------
 

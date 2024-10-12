@@ -1,7 +1,7 @@
 #include "FreeCam.h"
 
 FreeCam::FreeCam(GLFWwindow* window):
-    m_Yaw(-90.0f), m_Pitch(0), m_FirstMouse(true),
+    m_FirstMouse(true),
     m_LastX(1920.0f / 2.0f), m_LastY(1080.0f / 2.0f),
     m_Radius(20000.0f), m_CentralPoint(0.0f, 0.0f, 0.0f),
     m_Pressed(false), window(window), cameraSpeed(50), mouseControlEnabled(false)
@@ -51,7 +51,7 @@ void FreeCam::updateCursorPosition() {
 
 void FreeCam::mouse_Dragcallback() {
 
-    updateCursorPosition(); //Keep the mouse at the center of the screen, even though it should be hidden
+    updateCursorPosition(); // Keep the mouse at the center of the screen, even though it should be hidden
 
     glfwGetCursorPos(this->window, &m_MouseX, &m_MouseY);
     float xpos = static_cast<float>(m_MouseX);
@@ -65,28 +65,37 @@ void FreeCam::mouse_Dragcallback() {
     m_LastY = ypos;
 
     // Adjust sensitivity
-    float sensitivity = 0.05f;
+    float sensitivity = 0.5f;
     xoffset *= sensitivity;
     yoffset *= sensitivity;
 
-    // Update yaw and pitch
-    m_Yaw += xoffset;
-    m_Pitch += yoffset;
+    // Update yaw and pitch with offsets
+    float newYaw = m_CameraInfo.m_Yaw + xoffset;
+    float newPitch = m_CameraInfo.m_Pitch + yoffset;
 
     // Constrain pitch to avoid flipping
-    if (m_Pitch > 89.0f) m_Pitch = 89.0f;
-    if (m_Pitch < -89.0f) m_Pitch = -89.0f;
+    if (newPitch > 89.0f) newPitch = 89.0f;
+    if (newPitch < -89.0f) newPitch = -89.0f;
+
+    // Smooth the yaw and pitch using interpolation (exponential smoothing)
+    m_SmoothedYaw = (1.0f - smoothingFactor) * m_SmoothedYaw + smoothingFactor * newYaw;
+    m_SmoothedPitch = (1.0f - smoothingFactor) * m_SmoothedPitch + smoothingFactor * newPitch;
+
+    // Update the actual camera yaw and pitch with the smoothed values
+    m_CameraInfo.m_Yaw = m_SmoothedYaw;
+    m_CameraInfo.m_Pitch = m_SmoothedPitch;
 
     // Update the camera's front direction based on the new yaw and pitch
     updateCameraVectors();
 }
 
+
 void FreeCam::updateCameraVectors() {
     // Calculate the new front vector
     glm::vec3 front;
-    front.x = cos(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
-    front.y = sin(glm::radians(m_Pitch));
-    front.z = sin(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
+    front.x = cos(glm::radians(m_CameraInfo.m_Yaw)) * cos(glm::radians(m_CameraInfo.m_Pitch));
+    front.y = sin(glm::radians(m_CameraInfo.m_Pitch));
+    front.z = sin(glm::radians(m_CameraInfo.m_Yaw)) * cos(glm::radians(m_CameraInfo.m_Pitch));
     m_CameraInfo.m_CameraFront = glm::normalize(front);  // Normalize the front vector
 
     // Calculate right and up vectors based on the front vector

@@ -61,6 +61,9 @@ struct VelocityComponent : public IComponent {
 struct TransformComponent : public IRenderable , IComponent {
     glm::mat4 transform;
     float scale;
+    float yaw = 0.0f;   // Rotation around the Y-axis
+    float pitch = 0.0f; // Rotation around the X-axis
+    float roll = 0.0f;  // Rotation around the Z-axis
     int modelId;
 
     TransformComponent() = default;
@@ -92,11 +95,33 @@ struct TransformComponent : public IRenderable , IComponent {
                  transform[1][1] = scale;
                  transform[2][2] = scale;
              }
+             // Rotation controls
+             if (ImGui::DragFloat("Yaw (Y-axis)", &yaw, 0.1f, -180.0f, 180.0f)) {
+                 // Reset the rotation to the new yaw value
+                 transform = glm::rotate(glm::mat4(1.0f), glm::radians(yaw), glm::vec3(0.0f, 1.0f, 0.0f)) * scale;
+
+                 transform[3][3] = 1.0f;
+             }
+             if (ImGui::DragFloat("Pitch (X-axis)", &pitch, 0.1f, -180.0f, 180.0f)) {
+                 // Reset the rotation to the new pitch value
+                 transform = glm::rotate(glm::mat4(1.0f), glm::radians(pitch), glm::vec3(1.0f, 0.0f, 0.0f)) * scale;
+
+                 transform[3][3] = 1.0f;
+             }
+             if (ImGui::DragFloat("Roll (Z-axis)", &roll, 0.1f, -180.0f, 180.0f)) {
+                 // Reset the rotation to the new roll value
+                 transform = glm::rotate(glm::mat4(1.0f), glm::radians(roll), glm::vec3(0.0f, 0.0f, 1.0f)) * scale;
+
+                 transform[3][3] = 1.0f;
+             }
 
 
              ImGui::TreePop();
          }
      }
+
+     // Helper function to update the rotation matrix based on Euler angles
+     
 };
 
 struct BoundingBoxComponent : public IRenderable , IComponent {

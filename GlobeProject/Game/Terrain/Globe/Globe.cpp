@@ -23,11 +23,17 @@ void Globe::generate() {
     //m_boundingBox = calculateBoundingBox(vertices, size_t(8),size_t(3));
 
     int tempChunkSize = ChunkManager::getChunkSize();
+    std::vector<float> tempVertices; 
     for (int i = 0; i < vertices.size(); i += 8) {
         glm::vec3 tmpPoint = glm::vec3(vertices.at(i + 0), vertices.at(i + 1), vertices.at(i + 2));
+        tempVertices.push_back(vertices.at(i + 0));
+        tempVertices.push_back(vertices.at(i + 1));
+        tempVertices.push_back(vertices.at(i + 2));
         glm::ivec3 tempChunk = glm::ivec3(std::floor((tmpPoint.x / tempChunkSize) + 0.5), std::floor((tmpPoint.y / tempChunkSize) + 0.5), std::floor((tmpPoint.z / tempChunkSize) + 0.5));
         ChunkManager::addTerrainPointToChunk(tempChunk, tmpPoint);
     }
+
+    bvhNode = TerrainUtils::generateBVHForModel(tempVertices,indices);
 
     LOG_MESSAGE(LogLevel::INFO, "Elapsed time building terrain: " + std::to_string(stopWatch.stopReturn()) + " ms");
 
@@ -68,7 +74,22 @@ void Globe::generate() {
     std::vector<float>().swap(vertices);
     std::vector<unsigned int>().swap(indices);
 }
-void Globe::render(glm::mat4 model, glm::mat4 view, glm::mat4 projection, glm::vec3 viewPos) {
+
+void renderBVHNode(std::vector<float>& boundBoxRenderInfo, BVHNode* bvhNode) {
+    if (!bvhNode) return;  // Base case: if the node is null, stop recursion
+
+    // Render the bounding box for the current node
+    bvhNode->boundingBox.addBoundingBox(boundBoxRenderInfo);
+
+    // Recursively render bounding boxes for the left and right children
+    if (bvhNode->leftChild) {
+        renderBVHNode(boundBoxRenderInfo,bvhNode->leftChild);
+    }
+    if (bvhNode->rightChild) {
+        renderBVHNode(boundBoxRenderInfo,bvhNode->rightChild);
+    }
+}
+void Globe::render(LineRenderer& render, glm::mat4 model, glm::mat4 view, glm::mat4 projection, glm::vec3 viewPos) {
     glUseProgram(shaderProgram);
 
     glUniform3fv(glGetUniformLocation(shaderProgram, "lightPos"), 1, glm::value_ptr(globeProperties.lightPos));
@@ -86,6 +107,12 @@ void Globe::render(glm::mat4 model, glm::mat4 view, glm::mat4 projection, glm::v
 
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indiceSize, GL_UNSIGNED_INT, 0);
+
+    std::vector<float> boundingBoxPoints;
+    renderBVHNode(boundingBoxPoints,bvhNode);
+    render.appendLines(boundingBoxPoints, false);
+    render.render(model, view, projection);
+
 
     //globeGuiRender(globeProperties);
 

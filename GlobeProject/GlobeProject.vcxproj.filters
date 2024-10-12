@@ -33,6 +33,11 @@
     <ClCompile Include="Common\Camera\CameraTypes\FreeCam\FreeCam.cpp" />
     <ClCompile Include="Common\Camera\CameraTypes\OrbitalCam\OrbitalCam.cpp" />
     <ClCompile Include="Game\Scene\Scene.cpp" />
+    <ClCompile Include="Game\Scene\SceneUtils\SceneUtils.cpp" />
+    <ClCompile Include="Common\Terrain\TerrainManager.cpp" />
+    <ClCompile Include="Common\Terrain\StaticTerrain\StaticTerrain.cpp" />
+    <ClCompile Include="Common\Terrain\InstancedTerrain\InstancedTerrain.cpp" />
+    <ClCompile Include="Common\Terrain\TerrainUtils\TerrainUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Common">
@@ -188,11 +193,7 @@
     <ClInclude Include="Common\Vendor\glm\vec4.hpp" />
     <ClInclude Include="Common\Vendor\glm\vector_relational.hpp" />
     <ClInclude Include="Common\Camera\Camera.h" />
-    <ClInclude Include="Common\Units\Distance\Metric\MetricDistance.h" />
-    <ClInclude Include="Common\Units\Time\Time.h" />
-    <ClInclude Include="Common\Units\Coordinates\Coordinates.h" />
-    <ClInclude Include="Common\Stopwatch\Stopwatch.h" />
-    <ClInclude Include="Common\Units\Speed\Speed.h" />
+    <ClInclude Include="Common\Utilities\Stopwatch\Stopwatch.h" />
     <ClInclude Include="Common\Utilities\DoubleBuffer\DoubleBuffer.h" />
     <ClInclude Include="Common\Utilities\ThreadWrapper\ThreadWrapper.h" />
     <ClInclude Include="Common\SphereGeneration\SphereGeneration.h" />
@@ -338,6 +339,12 @@
     <ClInclude Include="Game\Scene\Scene.h" />
     <ClInclude Include="Game\Scene\SceneGui\SceneGui.h" />
     <ClInclude Include="Common\Serialization\SerializationUtils.h" />
+    <ClInclude Include="Game\Scene\SceneUtils\SceneUtils.h" />
+    <ClInclude Include="Common\AudioManager\AudioManager.h" />
+    <ClInclude Include="Common\Terrain\TerrainManager.h" />
+    <ClInclude Include="Common\Terrain\StaticTerrain\StaticTerrain.h" />
+    <ClInclude Include="Common\Terrain\InstancedTerrain\InstancedTerrain.h" />
+    <ClInclude Include="Common\Terrain\TerrainUtils\TerrainUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Common\Vendor\glm\detail\func_common.inl" />
@@ -467,5 +474,9 @@
     <Image Include="Resources\Skybox\Skybox1\left.png" />
     <Image Include="Resources\Skybox\Skybox1\right.png" />
     <Image Include="Resources\Skybox\Skybox1\top.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="Resources\Audio\WeaponHit.mp3" />
+    <Media Include="Resources\Audio\Fireball.mp3" />
   </ItemGroup>
 </Project>

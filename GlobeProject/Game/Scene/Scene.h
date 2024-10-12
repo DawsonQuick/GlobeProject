@@ -84,12 +84,32 @@ public:
 
 
     //--------------------------------------------------------------------------
+    //
+        //Remove all things from the current scene
+        void clear() {
+            for (auto it = entityMap.begin(); it != entityMap.end(); ++it) {
+                ECS::destroyEntity(it->second);
+            }
+
+            entityMap.clear();
+            ChunkManager::clearEntityToChunkMap();
+        }
+
+        void setSceneWindow(GLFWwindow* window) {
+            activeWindow = window;
+        }
+
+        GLFWwindow* getCurrentSceneWindow() {
+            return activeWindow;
+        }
 
 
 private:
     // Private constructor to prevent instantiation
     Scene() = default;
 
+
+    GLFWwindow* activeWindow;
     // Static map to hold entities
     std::unordered_map<entt::entity, ECS::Entity> entityMap;
     std::unordered_map<std::string, std::unique_ptr<Camera>> sceneCameraMap;

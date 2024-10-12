@@ -3,7 +3,7 @@
 #define GROUND_H
 #include <iostream>
 #include <GL/glew.h>
-#include "./../../../Common/Stopwatch/Stopwatch.h"
+#include "./../../../Common/Utilities/Stopwatch/Stopwatch.h"
 #include "./../../../Common/TerrainGeneration/PlanarTerrain/PlanarTerrain.h"
 #include "./../../../Common/Vendor/glm/glm.hpp"
 #include "./../../../Common/Vendor/glm/gtc/matrix_transform.hpp"
