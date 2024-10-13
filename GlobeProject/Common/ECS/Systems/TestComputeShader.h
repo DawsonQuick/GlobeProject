@@ -48,7 +48,7 @@ public:
     }
 
     void performOperations(entt::registry& registry, std::vector<RenderTransferDataTemp>& returnRenderData) {
-        auto view = registry.view<PositionComponent, CircularOrbitComponent, BoundingBoxComponent, TransformComponent>();
+        auto view = registry.view<PositionComponent, CircularOrbitComponent, TransformComponent>();
         size_t numberOfEntities = view.size_hint();
 
         if (prevNumOfEntries != numberOfEntities) {
@@ -76,7 +76,6 @@ public:
         for (auto entity : view) {
             auto& pos = view.get<PositionComponent>(entity);
             auto& orbit = view.get<CircularOrbitComponent>(entity);
-            auto& bbox = view.get<BoundingBoxComponent>(entity);
             auto& trans = view.get<TransformComponent>(entity);
 
             positions[idx] = { pos.position, trans.scale , pos.chunk , 0.0f};
@@ -174,15 +173,13 @@ private:
         int index = 0;
         //---------------------------------------------------------------------------------------------------------------
 
-        auto view = registry.view<PositionComponent, CircularOrbitComponent, BoundingBoxComponent, TransformComponent>();
+        auto view = registry.view<PositionComponent, CircularOrbitComponent, TransformComponent>();
         size_t idx = 0;
         for (auto entity : view) {
             auto& posComp = view.get<PositionComponent>(entity);
-            auto& boxComp = view.get<BoundingBoxComponent>(entity);
             auto& transformComp = view.get<TransformComponent>(entity);
 
             posComp.updatePos(positions[idx].position);
-            boxComp.update(positions[idx].position, positions[idx].scale);
 
             // Check for chunk changes and update ChunkManager accordingly
             if (posComp.chunk != positions[idx].chunk) {
@@ -200,7 +197,7 @@ private:
                 auto it = modelIdToVectorPosition.find(transformComp.modelId);
                 if (it != modelIdToVectorPosition.end()) {
                     //Model is already loaded
-                    returnRenderData.at(it->second).instanceInformation.push_back(RenderTransferData(transformComp.updatePosition(positions[idx].position), boxComp.Color));
+                    returnRenderData.at(it->second).instanceInformation.push_back(RenderTransferData(transformComp.updatePosition(positions[idx].position), transformComp.color));
                 }
                 else {
                     //Model has not been added to the vector so needs to be added  
@@ -209,7 +206,7 @@ private:
                     RenderTransferDataTemp newModelEntry;
                     newModelEntry.modelId = transformComp.modelId;
                     std::vector<RenderTransferData> tempVector;
-                    tempVector.push_back(RenderTransferData(transformComp.updatePosition(positions[idx].position), boxComp.Color));
+                    tempVector.push_back(RenderTransferData(transformComp.updatePosition(positions[idx].position), transformComp.color));
                     newModelEntry.instanceInformation = tempVector;
                     returnRenderData.push_back(newModelEntry);
 

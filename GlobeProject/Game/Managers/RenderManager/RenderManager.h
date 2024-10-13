@@ -28,6 +28,8 @@
 #include "./InstancedRenderingOrchestrator/InstancedRenderingOrchestrator.h"
 #include "./../../Terrain/TerrainChunkOrchestrator/TerrainChunkOrchestrator.h"
 
+#include "./../../../Common/Terrain/TerrainManager.h"
+
 #include "./../../../Common/IO/IO.h"
 #include "./../../../Common/AudioManager/AudioManager.h"
 class RenderManager

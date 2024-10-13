@@ -65,13 +65,18 @@ struct TransformComponent : public IRenderable , IComponent {
     float pitch = 0.0f; // Rotation around the X-axis
     float roll = 0.0f;  // Rotation around the Z-axis
     int modelId;
+    glm::vec3 color;
 
     TransformComponent() = default;
     TransformComponent(const TransformComponent&) = default;
-    TransformComponent(const glm::mat4& newTransform, int& modelId)
-        :transform(newTransform), modelId(modelId) {
+    TransformComponent(const glm::mat4& newTransform, int& modelId, glm::vec3 color)
+        :transform(newTransform), modelId(modelId), color(color) {
         scale = 1;
         transform = glm::scale(transform, glm::vec3(scale));
+    }
+
+    int getModelId() {
+        return modelId;
     }
 
 
@@ -122,100 +127,6 @@ struct TransformComponent : public IRenderable , IComponent {
 
      // Helper function to update the rotation matrix based on Euler angles
      
-};
-
-struct BoundingBoxComponent : public IRenderable , IComponent {
-    glm::vec3 RBB;
-    glm::vec3 RBT;
-    glm::vec3 RFT;
-    glm::vec3 RFB;
-    glm::vec3 LBB;
-    glm::vec3 LBT;
-    glm::vec3 LFT;
-    glm::vec3 LFB;
-
-    glm::vec3 Color;
-
-    std::vector<float> renderData;
-
-    void update(const glm::vec3& position, float scale) {
-        RBB = position + initialRBB * scale;
-        RBT = position + initialRBT * scale;
-        RFT = position + initialRFT * scale;
-        RFB = position + initialRFB * scale;
-        LBB = position + initialLBB * scale;
-        LBT = position + initialLBT * scale;
-        LFT = position + initialLFT * scale;
-        LFB = position + initialLFB * scale;
-    }
-
-    void setColor(const glm::vec3& color) {
-        Color = color;
-    }
-
-    const std::vector<float>& getRenderData() {
-        return renderData;
-    }
-
-    void generateRenderData(float(&arr)[144]) {
-        renderData.assign(arr, arr + sizeof(arr) / sizeof(arr[0]));
-    }
-    BoundingBoxComponent() = default;
-
-    void printVec3(glm::vec3 vec) {
-        std::cout << vec.x << " " << vec.y << " " << vec.z << std::endl;
-    }
-
-    BoundingBoxComponent(const BoundingBoxComponent& copy , glm::vec3 color) {
-        RBB = copy.RBB;
-        RBT = copy.RBT;
-        RFT = copy.RFT;
-        RFB = copy.RFB;
-        LBB = copy.LBB;
-        LBT = copy.LBT;
-        LFT = copy.LFT;
-        LFB = copy.LFB;
-        initialRBB = copy.RBB;
-        initialRBT = copy.RBT;
-        initialRFT = copy.RFT;
-        initialRFB = copy.RFB;
-        initialLBB = copy.LBB;
-        initialLBT = copy.LBT;
-        initialLFT = copy.LFT;
-        initialLFB = copy.LFB;
-        dataGenerated = false;
-        Color = color;
-
-    };
-    BoundingBoxComponent(const glm::vec3& rbb, const glm::vec3& rbt, const glm::vec3& rft, const glm::vec3& rfb,
-                         const glm::vec3& lbb, const glm::vec3& lbt, const glm::vec3& lft, const glm::vec3& lfb,
-                         const glm::vec3& color)
-        : RBB(rbb), RBT(rbt), RFT(rft), RFB(rfb), LBB(lbb), LBT(lbt), LFT(lft), LFB(lfb), Color(color),
-          initialRBB(rbb), initialRBT(rbt), initialRFT(rft), initialRFB(rfb),
-          initialLBB(lbb), initialLBT(lbt), initialLFT(lft), initialLFB(lfb),
-          dataGenerated(false) {}
-
-
-    void guiRender() override {
-        if (ImGui::TreeNode("Entity Bounding Box Info")) {
-            // Convert glm::vec3 to ImVec4 (ImGui's color type)
-            ImVec4 colorVec4(Color.r, Color.g, Color.b, 1.0f);
-
-            // Use ImGui::ColorEdit3 to display a color picker
-            if (ImGui::ColorEdit3("Color", (float*)&colorVec4)) {
-                // Update glm::vec3 with the new color values
-                Color.r = colorVec4.x;
-                Color.g = colorVec4.y;
-                Color.b = colorVec4.z;
-            }
-            ImGui::TreePop();
-        }
-    }
-
-private:
-    glm::vec3 initialRBB, initialRBT, initialRFT, initialRFB;
-    glm::vec3 initialLBB, initialLBT, initialLFT, initialLFB;
-    bool dataGenerated;
 };
 
 struct CircularOrbitComponent : public IRenderable , IComponent {

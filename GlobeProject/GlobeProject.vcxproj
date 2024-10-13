@@ -157,7 +157,6 @@
     <ClCompile Include="Common\Terrain\InstancedTerrain\InstancedTerrain.cpp" />
     <ClCompile Include="Common\Terrain\StaticTerrain\StaticTerrain.cpp" />
     <ClCompile Include="Common\Terrain\TerrainManager.cpp" />
-    <ClCompile Include="Common\Terrain\TerrainUtils\TerrainUtils.cpp" />
     <ClCompile Include="Common\Utilities\PerlinNoise\PerlinNoise.cpp" />
     <ClCompile Include="Common\Utilities\ThreadPool\ThreadPool.cpp" />
     <ClCompile Include="Common\Vendor\imgui\imgui.cpp" />
@@ -167,6 +166,7 @@
     <ClCompile Include="Common\Vendor\imgui\main.cpp" />
     <ClCompile Include="Common\Vendor\stb_image\stb_image.cpp" />
     <ClCompile Include="Common\Vendor\stb_image\stb_image_write.cpp" />
+    <ClCompile Include="Common\WorldInteraction\WorldInteraction.cpp" />
     <ClCompile Include="Game\Managers\DataTransferManager\DataTransferManager.cpp" />
     <ClCompile Include="Game\Managers\RenderManager\InstancedRenderingOrchestrator\InstancedRenderingOrchestrator.cpp" />
     <ClCompile Include="Game\Managers\RenderManager\RenderUtils\RenderUtils.cpp" />
@@ -198,7 +198,6 @@
     <ClInclude Include="Common\Logger\Logger.h" />
     <ClInclude Include="Common\ModelManager\ModelLoading\AssimpLoader\AssimpLoader.h" />
     <ClInclude Include="Common\Camera\Camera.h" />
-    <ClInclude Include="Common\ModelManager\ModelLoading\BoundingBox\BoundingBoxGeneration.h" />
     <ClInclude Include="Common\ModelManager\ModelManager.h" />
     <ClInclude Include="Common\OpenGLUtilities\LineRenderer.h" />
     <ClInclude Include="Common\OpenGLUtilities\LineRenderer\LineRenderer.h" />
@@ -211,7 +210,6 @@
     <ClInclude Include="Common\Terrain\InstancedTerrain\InstancedTerrain.h" />
     <ClInclude Include="Common\Terrain\StaticTerrain\StaticTerrain.h" />
     <ClInclude Include="Common\Terrain\TerrainManager.h" />
-    <ClInclude Include="Common\Terrain\TerrainUtils\TerrainUtils.h" />
     <ClInclude Include="Common\Utilities\CappedDeque\CappedDeque.h" />
     <ClInclude Include="Common\Utilities\DoubleBuffer\DoubleBuffer.h" />
     <ClInclude Include="Common\Utilities\LockFreeMap\LockFreeMap.h" />
@@ -599,8 +597,29 @@
     <None Include="Common\Vendor\glm\gtx\vector_angle.inl" />
     <None Include="Common\Vendor\glm\gtx\vector_query.inl" />
     <None Include="Common\Vendor\glm\gtx\wrap.inl" />
+    <None Include="Resources\Models\sponzaPalace\sponza.mtl" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Resources\Models\sponzaPalace\00_skap.JPG" />
+    <Image Include="Resources\Models\sponzaPalace\01_STUB-bump.jpg" />
+    <Image Include="Resources\Models\sponzaPalace\01_STUB.JPG" />
+    <Image Include="Resources\Models\sponzaPalace\01_St_kp-bump.jpg" />
+    <Image Include="Resources\Models\sponzaPalace\01_St_kp.JPG" />
+    <Image Include="Resources\Models\sponzaPalace\01_S_ba.JPG" />
+    <Image Include="Resources\Models\sponzaPalace\01_S_kap-bump.jpg" />
+    <Image Include="Resources\Models\sponzaPalace\01_S_kap.JPG" />
+    <Image Include="Resources\Models\sponzaPalace\KAMEN-bump.jpg" />
+    <Image Include="Resources\Models\sponzaPalace\KAMEN-stup.JPG" />
+    <Image Include="Resources\Models\sponzaPalace\KAMEN.JPG" />
+    <Image Include="Resources\Models\sponzaPalace\prozor1.JPG" />
+    <Image Include="Resources\Models\sponzaPalace\reljef-bump.jpg" />
+    <Image Include="Resources\Models\sponzaPalace\reljef.JPG" />
+    <Image Include="Resources\Models\sponzaPalace\sp_luk-bump.JPG" />
+    <Image Include="Resources\Models\sponzaPalace\sp_luk.JPG" />
+    <Image Include="Resources\Models\sponzaPalace\vrata_ko.JPG" />
+    <Image Include="Resources\Models\sponzaPalace\vrata_kr.JPG" />
+    <Image Include="Resources\Models\sponzaPalace\x01_st-bump.jpg" />
+    <Image Include="Resources\Models\sponzaPalace\x01_st.JPG" />
     <Image Include="Resources\Skybox\Skybox1\back.png" />
     <Image Include="Resources\Skybox\Skybox1\bottom.png" />
     <Image Include="Resources\Skybox\Skybox1\front.png" />
@@ -611,6 +630,9 @@
   <ItemGroup>
     <Media Include="Resources\Audio\Fireball.mp3" />
     <Media Include="Resources\Audio\WeaponHit.mp3" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Resources\Models\sponzaPalace\copyright.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

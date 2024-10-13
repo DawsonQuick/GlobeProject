@@ -1,6 +1,8 @@
 #include "Globe.h"
 #include "GlobeGui/GlobeGui.h"
 
+
+
 Globe::Globe() {
 
 }
@@ -10,12 +12,14 @@ Globe::~Globe() {
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
 }
+
 void Globe::generate() {
     shaderProgram = Globe::createShaderProgram();
 
     stopWatch.start();
 
     //generateSphere(6378.1f, (18 * 4), (18 * 2), vertices, indices);
+    /*
     generateSpherifiedCubeSphere(6378.1f, (12 * 4), vertices, indices);
 
    LOG_MESSAGE(LogLevel::INFO,"Verticies: " + std::to_string(vertices.size()));
@@ -32,8 +36,10 @@ void Globe::generate() {
         glm::ivec3 tempChunk = glm::ivec3(std::floor((tmpPoint.x / tempChunkSize) + 0.5), std::floor((tmpPoint.y / tempChunkSize) + 0.5), std::floor((tmpPoint.z / tempChunkSize) + 0.5));
         ChunkManager::addTerrainPointToChunk(tempChunk, tmpPoint);
     }
+    */
+    int id = ModelManager::loadModel("./Resources/Models/CrytekSponza/sponza.obj");
 
-    bvhNode = TerrainUtils::generateBVHForModel(tempVertices,indices);
+    bvhNode = ModelManager::getModel(id)->bvhNode;
 
     LOG_MESSAGE(LogLevel::INFO, "Elapsed time building terrain: " + std::to_string(stopWatch.stopReturn()) + " ms");
 
@@ -44,10 +50,10 @@ void Globe::generate() {
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, ModelManager::getModel(id)->vertices.size() * sizeof(Vertex), &ModelManager::getModel(id)->vertices[0], GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, ModelManager::getModel(id)->indices.size() * sizeof(unsigned int), &ModelManager::getModel(id)->indices[0], GL_STATIC_DRAW);
 
     // Position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
@@ -66,29 +72,19 @@ void Globe::generate() {
     // Shader uniforms
     glUseProgram(shaderProgram);
 
-    indiceSize = indices.size();
+    indiceSize = ModelManager::getModel(id)->indices.size();
 
     vertices.clear();
     indices.clear();
 
     std::vector<float>().swap(vertices);
     std::vector<unsigned int>().swap(indices);
+
+    //renderBVHNode(m_BoundingBoxPoints, bvhNode, glm::mat4(50.0f));
+
 }
 
-void renderBVHNode(std::vector<float>& boundBoxRenderInfo, BVHNode* bvhNode) {
-    if (!bvhNode) return;  // Base case: if the node is null, stop recursion
 
-    // Render the bounding box for the current node
-    bvhNode->boundingBox.addBoundingBox(boundBoxRenderInfo);
-
-    // Recursively render bounding boxes for the left and right children
-    if (bvhNode->leftChild) {
-        renderBVHNode(boundBoxRenderInfo,bvhNode->leftChild);
-    }
-    if (bvhNode->rightChild) {
-        renderBVHNode(boundBoxRenderInfo,bvhNode->rightChild);
-    }
-}
 void Globe::render(LineRenderer& render, glm::mat4 model, glm::mat4 view, glm::mat4 projection, glm::vec3 viewPos) {
     glUseProgram(shaderProgram);
 
@@ -99,22 +95,22 @@ void Globe::render(LineRenderer& render, glm::mat4 model, glm::mat4 view, glm::m
     unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
     unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
     unsigned int projLoc = glGetUniformLocation(shaderProgram, "projection");
-    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+    glm::mat4 newModel = glm::mat4(50.0f);
+
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(newModel));
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
-    glUniform3fv(glGetUniformLocation(shaderProgram, "viewPos"), 1, glm::value_ptr(viewPos));
 
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indiceSize, GL_UNSIGNED_INT, 0);
 
-    std::vector<float> boundingBoxPoints;
-    renderBVHNode(boundingBoxPoints,bvhNode);
-    render.appendLines(boundingBoxPoints, false);
-    render.render(model, view, projection);
+
+    //render.appendLines(m_BoundingBoxPoints, false);
+    //render.render(newModel, view, projection);
 
 
-    //globeGuiRender(globeProperties);
+    globeGuiRender(globeProperties);
 
 }
 

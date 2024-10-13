@@ -2,41 +2,18 @@
 #include "./CommonDataStrutures/CommonDataStructures.h"
 #include "./../ECS/Components/Components.h"
 
-inline bool rayIntersectsBoundingBox(const Ray& ray, const BoundingBox& bbox) {
-    // Implementation of ray-box intersection
-    glm::vec3 invDirection = 1.0f / ray.direction;
-    glm::vec3 tMin = (bbox.LBB - ray.origin) * invDirection;
-    glm::vec3 tMax = (bbox.RFT - ray.origin) * invDirection;
+#include <algorithm>
 
-    glm::vec3 t1 = glm::min(tMin, tMax);
-    glm::vec3 t2 = glm::max(tMin, tMax);
 
-    float tNear = glm::max(glm::max(t1.x, t1.y), t1.z);
-    float tFar = glm::min(glm::min(t2.x, t2.y), t2.z);
+class WorldInteraction {
+public:
+    static std::pair<bool, float> rayIntersectsBoundingBox(const Ray& ray, const BoundingBox& bbox, const glm::mat4 transform);
+    static BVHNode* generateBVHForModel(std::vector<float> vertices, std::vector<unsigned int> indices);
 
-    if (tNear > tFar || tFar < 0) {
-        return false;
-    }
-
-    return true;
-}
-
-inline std::pair<bool, float> rayIntersectsBoundingBox(const Ray& ray, const BoundingBoxComponent& bbox) {
-    // Implementation of ray-box intersection
-    glm::vec3 invDirection = 1.0f / ray.direction;
-    glm::vec3 tMin = (bbox.LBB - ray.origin) * invDirection;
-    glm::vec3 tMax = (bbox.RFT - ray.origin) * invDirection;
-
-    glm::vec3 t1 = glm::min(tMin, tMax);
-    glm::vec3 t2 = glm::max(tMin, tMax);
-
-    float tNear = glm::max(glm::max(t1.x, t1.y), t1.z);
-    float tFar = glm::min(glm::min(t2.x, t2.y), t2.z);
-
-    if (tNear > tFar || tFar < 0) {
-        return std::make_pair(false, 0.0f);
-    }
-
-    // Return true for intersection and tNear as the distance from the ray's origin
-    return std::make_pair(true, tNear);
-}
+private:
+    static std::vector<Triangle> generateTriangles(std::vector<float> vertices, std::vector<unsigned int> indices);
+    static BVHNode* buildBVH(std::vector<Triangle>& triangles, int start, int end);
+    static BVHNode* createLeafNode(std::vector<Triangle>& triangles, int start, int end, const BoundingBox& boundingBox);
+    static int partitionBySpatialMedian(std::vector<Triangle>& triangles, int start, int end, int axis);
+    static int partitionBySAH(std::vector<Triangle>& triangles, int start, int end, int axis, const BoundingBox& boundingBox);
+};

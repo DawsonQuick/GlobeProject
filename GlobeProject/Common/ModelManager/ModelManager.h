@@ -7,15 +7,17 @@
 #include <functional>
 #include <mutex>
 #include "./ModelLoading/AssimpLoader/AssimpLoader.h"
-#include "./ModelLoading/BoundingBox/BoundingBoxGeneration.h"
-
+#include "./../WorldInteraction/WorldInteraction.h"
 
 
 struct Model {
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
+	BVHNode* bvhNode;
 
-	ModelBoundingBox boundingBox;
+	~Model() {
+		delete bvhNode;
+	}
 };
 namespace {
 	inline int stringToID(const std::string& str) {
@@ -39,7 +41,16 @@ namespace ModelManager {
 		if (it == idToModelMap.end()) {
 			std::shared_ptr<Model> newModel = std::make_shared<Model>();
 			AssimpLoader::loadModel(newModel->vertices, newModel->indices, path);
-			newModel->boundingBox = calculateBoundingBox(newModel->vertices);
+			std::vector<float> vertexPositions;
+
+			for (const Vertex &vertex : newModel->vertices) {
+				vertexPositions.push_back(vertex.position.x);
+				vertexPositions.push_back(vertex.position.y);
+				vertexPositions.push_back(vertex.position.z);
+			}
+
+			newModel->bvhNode = WorldInteraction::generateBVHForModel(vertexPositions, newModel->indices);
+
 			idToModelMap[id] = newModel;
 		}	
 			return id;
@@ -54,17 +65,22 @@ namespace ModelManager {
 		std::shared_ptr<Model> newModel = std::make_shared<Model>();
 
 		std::vector<Vertex> tempVertexList;
+		std::vector<float> vertexPosition;
 		for (int i = 0; i < vertices.size(); i += 8) {
 			Vertex tempVertex;
 			tempVertex.position = glm::vec3(vertices[i + 0], vertices[i + 1], vertices[i + 2]);
+
+			vertexPosition.push_back(vertices[i + 0]);
+			vertexPosition.push_back(vertices[i + 1]);
+			vertexPosition.push_back(vertices[i + 2]);
+
 			tempVertex.normal = glm::vec3(vertices[i + 3], vertices[i + 4], vertices[i + 5]);
 			tempVertex.texCoords = glm::vec2(vertices[i + 6], vertices[i + 7]);
 			tempVertexList.push_back(tempVertex);
 		}
 		newModel->vertices = tempVertexList;
 		newModel->indices = indices;
-		newModel->boundingBox = calculateBoundingBox(tempVertexList);
-
+		newModel->bvhNode = WorldInteraction::generateBVHForModel(vertexPosition, indices);
 		idToModelMap[id] = std::move(newModel);
 		return id;
 	}

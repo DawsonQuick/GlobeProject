@@ -11,6 +11,7 @@
 #include "./../../Common/Logger/Logger.h"
 #include "./../../Common/TerrainGeneration/PlanarTerrain/ComputeShaderMethod/ComputeShaderPlanarTerrainGeneration.h"
 #include "./../../Common/Utilities/Stopwatch/Stopwatch.h"
+#include "./../../Common/ModelManager/ModelManager.h"
 #include <algorithm> // For std::find
 
 // Hash function for glm::ivec3
@@ -84,28 +85,50 @@ namespace {
     }
 
 
-    void generateRenderSelectedEntityBoundingBox(std::vector<float>& renderData, BoundingBoxComponent& bb, const glm::vec3& color) {
-        std::vector<float> edges = {
-            // Bottom square (LBB, LBF, RBB, RBF)
-            bb.LBB.x, bb.LBB.y, bb.LBB.z, color.r, color.g, color.b,  bb.RBB.x, bb.RBB.y, bb.RBB.z, color.r, color.g, color.b,
-            bb.RBB.x, bb.RBB.y, bb.RBB.z, color.r, color.g, color.b,  bb.RFB.x, bb.RFB.y, bb.RFB.z, color.r, color.g, color.b,
-            bb.RFB.x, bb.RFB.y, bb.RFB.z, color.r, color.g, color.b,  bb.LFB.x, bb.LFB.y, bb.LFB.z, color.r, color.g, color.b,
-            bb.LFB.x, bb.LFB.y, bb.LFB.z, color.r, color.g, color.b,  bb.LBB.x, bb.LBB.y, bb.LBB.z, color.r, color.g, color.b,
+    void generateRenderSelectedEntityBoundingBox(std::vector<float>& renderData,BVHNode *bvhNode, const glm::vec3& color , glm::mat4 trans) {
+            if (!bvhNode) return;  // Base case: if the node is null, stop recursion
 
-            // Top square (LTB, LTF, RTB, RFT)
-            bb.LBT.x, bb.LBT.y, bb.LBT.z, color.r, color.g, color.b,  bb.RBT.x, bb.RBT.y, bb.RBT.z, color.r, color.g, color.b,
-            bb.RBT.x, bb.RBT.y, bb.RBT.z, color.r, color.g, color.b,  bb.RFT.x, bb.RFT.y, bb.RFT.z, color.r, color.g, color.b,
-            bb.RFT.x, bb.RFT.y, bb.RFT.z, color.r, color.g, color.b,  bb.LFT.x, bb.LFT.y, bb.LFT.z, color.r, color.g, color.b,
-            bb.LFT.x, bb.LFT.y, bb.LFT.z, color.r, color.g, color.b,  bb.LBT.x, bb.LBT.y, bb.LBT.z, color.r, color.g, color.b,
+            glm::vec3 LBB = glm::vec3(trans * glm::vec4(bvhNode->boundingBox.LBB, 1.0));
+            glm::vec3 RBB = glm::vec3(trans * glm::vec4(bvhNode->boundingBox.RBB, 1.0));
+            glm::vec3 RFB = glm::vec3(trans * glm::vec4(bvhNode->boundingBox.RFB, 1.0));
+            glm::vec3 LFB = glm::vec3(trans * glm::vec4(bvhNode->boundingBox.LFB, 1.0));
+            glm::vec3 LBT = glm::vec3(trans * glm::vec4(bvhNode->boundingBox.LBT, 1.0));
+            glm::vec3 RFT = glm::vec3(trans * glm::vec4(bvhNode->boundingBox.RFT, 1.0));
+            glm::vec3 LFT = glm::vec3(trans * glm::vec4(bvhNode->boundingBox.LFT, 1.0));
+            glm::vec3 RBT = glm::vec3(trans * glm::vec4(bvhNode->boundingBox.RBT, 1.0));
 
-            // Vertical edges
-            bb.LBB.x, bb.LBB.y, bb.LBB.z, color.r, color.g, color.b,  bb.LBT.x, bb.LBT.y, bb.LBT.z, color.r, color.g, color.b,
-            bb.RBB.x, bb.RBB.y, bb.RBB.z, color.r, color.g, color.b,  bb.RBT.x, bb.RBT.y, bb.RBT.z, color.r, color.g, color.b,
-            bb.RFB.x, bb.RFB.y, bb.RFB.z, color.r, color.g, color.b,  bb.RFT.x, bb.RFT.y, bb.RFT.z, color.r, color.g, color.b,
-            bb.LFB.x, bb.LFB.y, bb.LFB.z, color.r, color.g, color.b,  bb.LFT.x, bb.LFT.y, bb.LFT.z, color.r, color.g, color.b
-        };
+            std::vector<float> edges = {
+                // Bottom square (LBB, LBF, RBB, RBF)
+                LBB.x, LBB.y, LBB.z, color.r, color.g, color.b,  RBB.x, RBB.y , RBB.z, color.r, color.g, color.b,
+                RBB.x, RBB.y, RBB.z, color.r, color.g, color.b,  RFB.x, RFB.y , RFB.z, color.r, color.g, color.b,
+                RFB.x, RFB.y, RFB.z, color.r, color.g, color.b,  LFB.x, LFB.y , LFB.z, color.r, color.g, color.b,
+                LFB.x, LFB.y, LFB.z, color.r, color.g, color.b,  LBB.x, LBB.y , LBB.z, color.r, color.g, color.b,
 
-        renderData.insert(renderData.end(), edges.begin(), edges.end());
+                // Top square (LTB, LTF, RTB, RFT)
+                LBT.x, LBT.y, LBT.z, color.r, color.g, color.b,  RBT.x, RBT.y , RBT.z, color.r, color.g, color.b,
+                RBT.x, RBT.y, RBT.z, color.r, color.g, color.b,  RFT.x, RFT.y , RFT.z, color.r, color.g, color.b,
+                RFT.x, RFT.y, RFT.z, color.r, color.g, color.b,  LFT.x, LFT.y , LFT.z, color.r, color.g, color.b,
+                LFT.x, LFT.y, LFT.z, color.r, color.g, color.b,  LBT.x, LBT.y , LBT.z, color.r, color.g, color.b,
+
+                // Vertical edges
+                LBB.x, LBB.y, LBB.z, color.r, color.g, color.b,  LBT.x, LBT.y , LBT.z, color.r, color.g, color.b,
+                RBB.x, RBB.y, RBB.z, color.r, color.g, color.b,  RBT.x, RBT.y , RBT.z, color.r, color.g, color.b,
+                RFB.x, RFB.y, RFB.z, color.r, color.g, color.b,  RFT.x, RFT.y , RFT.z, color.r, color.g, color.b,
+                LFB.x, LFB.y, LFB.z, color.r, color.g, color.b,  LFT.x, LFT.y , LFT.z, color.r, color.g, color.b
+            };
+
+            renderData.insert(renderData.end(), edges.begin(), edges.end());
+
+
+            // Recursively render bounding boxes for the left and right children
+            if (bvhNode->leftChild) {
+                generateRenderSelectedEntityBoundingBox(renderData, bvhNode->leftChild, color,trans);
+            }
+            if (bvhNode->rightChild) {
+                generateRenderSelectedEntityBoundingBox(renderData, bvhNode->rightChild, color, trans);
+            }
+        
+
     }
 
     void generateRenderRay(std::vector<float>& renderData, const Ray& ray) {
@@ -332,8 +355,8 @@ namespace ChunkManager {
                     float closestDistance = 9999999999999;
                     bool intersectionFound = false;
                     for (entt::entity ent : it->second) {
-                        generateRenderSelectedEntityBoundingBox(debugRenderInformation, ECS::registry.get<BoundingBoxComponent>(ent), glm::vec3(1.0f, 1.0f, 1.0f));
-                        auto [intersects, distance] = rayIntersectsBoundingBox(ray, ECS::registry.get<BoundingBoxComponent>(ent));
+                        generateRenderSelectedEntityBoundingBox(debugRenderInformation, ModelManager::getModel(ECS::registry.get<TransformComponent>(ent).getModelId())->bvhNode, glm::vec3(1.0f, 1.0f, 1.0f), ECS::registry.get<TransformComponent>(ent).transform);
+                        auto [intersects, distance] = WorldInteraction::rayIntersectsBoundingBox(ray, ModelManager::getModel(ECS::registry.get<TransformComponent>(ent).getModelId())->bvhNode->boundingBox, ECS::registry.get<TransformComponent>(ent).transform);
                         if (intersects) {
                             intersectionFound = true;
                             if (distance < closestDistance) {
@@ -343,7 +366,7 @@ namespace ChunkManager {
                         }
                     }
                     if (intersectionFound) {
-                        generateRenderSelectedEntityBoundingBox(debugRenderInformation,ECS::registry.get<BoundingBoxComponent>(closestEntity), glm::vec3(0.0f, 1.0f, 0.0f));
+                        generateRenderSelectedEntityBoundingBox(debugRenderInformation, ModelManager::getModel(ECS::registry.get<TransformComponent>(closestEntity).getModelId())->bvhNode, glm::vec3(0.0f, 1.0f, 0.0f), ECS::registry.get<TransformComponent>(closestEntity).transform);
                         
                         selectedEntity = closestEntity;
                         isEntitySelected = true;

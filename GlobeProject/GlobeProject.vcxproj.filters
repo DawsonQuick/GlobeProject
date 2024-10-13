@@ -37,7 +37,7 @@
     <ClCompile Include="Common\Terrain\TerrainManager.cpp" />
     <ClCompile Include="Common\Terrain\StaticTerrain\StaticTerrain.cpp" />
     <ClCompile Include="Common\Terrain\InstancedTerrain\InstancedTerrain.cpp" />
-    <ClCompile Include="Common\Terrain\TerrainUtils\TerrainUtils.cpp" />
+    <ClCompile Include="Common\WorldInteraction\WorldInteraction.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Common">
@@ -298,7 +298,6 @@
     <ClInclude Include="Common\Vendor\assimp\ZipArchiveIOSystem.h" />
     <ClInclude Include="Common\ModelManager\ModelLoading\AssimpLoader\AssimpLoader.h" />
     <ClInclude Include="Common\ModelManager\ModelManager.h" />
-    <ClInclude Include="Common\ModelManager\ModelLoading\BoundingBox\BoundingBoxGeneration.h" />
     <ClInclude Include="Common\WorldInteraction\WorldInteraction.h" />
     <ClInclude Include="Common\WorldInteraction\CommonDataStrutures\CommonDataStructures.h" />
     <ClInclude Include="Common\ECS\ECSWrapper.h" />
@@ -344,7 +343,6 @@
     <ClInclude Include="Common\Terrain\TerrainManager.h" />
     <ClInclude Include="Common\Terrain\StaticTerrain\StaticTerrain.h" />
     <ClInclude Include="Common\Terrain\InstancedTerrain\InstancedTerrain.h" />
-    <ClInclude Include="Common\Terrain\TerrainUtils\TerrainUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Common\Vendor\glm\detail\func_common.inl" />
@@ -466,6 +464,7 @@
     <None Include="Common\Vendor\assimp\SmoothingGroups.inl" />
     <None Include="Common\Vendor\assimp\vector2.inl" />
     <None Include="Common\Vendor\assimp\vector3.inl" />
+    <None Include="Resources\Models\sponzaPalace\sponza.mtl" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\Skybox\Skybox1\back.png" />
@@ -474,9 +473,32 @@
     <Image Include="Resources\Skybox\Skybox1\left.png" />
     <Image Include="Resources\Skybox\Skybox1\right.png" />
     <Image Include="Resources\Skybox\Skybox1\top.png" />
+    <Image Include="Resources\Models\sponzaPalace\00_skap.JPG" />
+    <Image Include="Resources\Models\sponzaPalace\01_S_ba.JPG" />
+    <Image Include="Resources\Models\sponzaPalace\01_S_kap.JPG" />
+    <Image Include="Resources\Models\sponzaPalace\01_S_kap-bump.jpg" />
+    <Image Include="Resources\Models\sponzaPalace\01_St_kp.JPG" />
+    <Image Include="Resources\Models\sponzaPalace\01_St_kp-bump.jpg" />
+    <Image Include="Resources\Models\sponzaPalace\01_STUB.JPG" />
+    <Image Include="Resources\Models\sponzaPalace\01_STUB-bump.jpg" />
+    <Image Include="Resources\Models\sponzaPalace\KAMEN.JPG" />
+    <Image Include="Resources\Models\sponzaPalace\KAMEN-bump.jpg" />
+    <Image Include="Resources\Models\sponzaPalace\KAMEN-stup.JPG" />
+    <Image Include="Resources\Models\sponzaPalace\prozor1.JPG" />
+    <Image Include="Resources\Models\sponzaPalace\reljef.JPG" />
+    <Image Include="Resources\Models\sponzaPalace\reljef-bump.jpg" />
+    <Image Include="Resources\Models\sponzaPalace\sp_luk.JPG" />
+    <Image Include="Resources\Models\sponzaPalace\sp_luk-bump.JPG" />
+    <Image Include="Resources\Models\sponzaPalace\vrata_ko.JPG" />
+    <Image Include="Resources\Models\sponzaPalace\vrata_kr.JPG" />
+    <Image Include="Resources\Models\sponzaPalace\x01_st.JPG" />
+    <Image Include="Resources\Models\sponzaPalace\x01_st-bump.jpg" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="Resources\Audio\WeaponHit.mp3" />
     <Media Include="Resources\Audio\Fireball.mp3" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Resources\Models\sponzaPalace\copyright.txt" />
   </ItemGroup>
 </Project>

@@ -106,19 +106,5 @@ void main() {
         return boundingBoxRenderInfo;
 	}
 
-
-	inline std::vector<float> updateBoundingBoxes() {
-		auto view = registry.view<BoundingBoxComponent>();
-		std::vector<float> boundingBoxRenderInfo;
-		for (auto [entity, bbox] : view.each()) {
-			const std::vector<float>& tmp = bbox.getRenderData();
-			boundingBoxRenderInfo.insert(boundingBoxRenderInfo.end(), tmp.begin(), tmp.end());
-			
-		}
-		
-		return boundingBoxRenderInfo;
-	}
-
-
 }
 #endif

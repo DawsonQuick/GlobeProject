@@ -48,8 +48,8 @@ int RenderManager::startRenderThread() {
 
     Scene::getInstance().setSceneWindow(window);
 
-    Globe globe;
-    globe.generate();
+    //Globe globe;
+    //globe.generate();
 
     //PlanarTerrain planarTerrain;
     //planarTerrain.generate();
@@ -73,6 +73,11 @@ int RenderManager::startRenderThread() {
     //RenderUtils renderUtils;
 
     InstancedRenderingOrchestrator instancedRenderer;
+
+    TerrainManager terrainManager;
+    StaticTerrain staticTerrain;
+    staticTerrain.generate();
+    terrainManager.setStaticTerrain(std::move(staticTerrain));
 
     Skybox skybox;
     skybox.loadSkyBox("./Resources/Skybox/Skybox1");
@@ -110,11 +115,11 @@ int RenderManager::startRenderThread() {
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
-            globe.render(lineRenderer,model, info.view, info.projection, info.m_CameraPos);
+            //globe.render(lineRenderer,model, info.view, info.projection, info.m_CameraPos);
             //planarTerrain.render(glm::mat4(1.0f), info.view, info.projection, info.m_CameraPos);
             //terrainChunkOrchestrator.render(glm::mat4(1.0f), info.view, info.projection);
             
-
+            terrainManager.render(lineRenderer, model, info.view, info.projection);
             skybox.RenderSkyBox(info.view, info.projection);
             //---------------------------------------------------------------------------------------
 
@@ -154,7 +159,7 @@ int RenderManager::startRenderThread() {
               ---------------------------------------------------------------------------------------*/
               //renderUtils.updateInstanceData(dtMrg.getDoubleBuffer(DataTransferTypes::TEST)->getActiveBuffer());
               //renderUtils.render(info.view, info.projection , globe.getGlobeRenderProperties().lightPos);
-            instancedRenderer.updateAndRender(dtMrg.getDoubleBuffer(DataTransferTypes::TEST)->getActiveBuffer(), info.view, info.projection, globe.getGlobeRenderProperties().lightPos, globe.getGlobeRenderProperties().lightColor);
+            instancedRenderer.updateAndRender(dtMrg.getDoubleBuffer(DataTransferTypes::TEST)->getActiveBuffer(), info.view, info.projection, glm::vec3(0.0,100.0,0.0), glm::vec3(0.9,0.9,0.9));
             //instancedRenderer.updateAndRender(dtMrg.getDoubleBuffer(DataTransferTypes::TEST)->getActiveBuffer(), info.view, info.projection, planarTerrain.getPlanarTerrainRenderProperties().lightPos, planarTerrain.getPlanarTerrainRenderProperties().lightColor);
             //----------------------------------------------------------------------------------------
         }

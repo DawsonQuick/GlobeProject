@@ -8,9 +8,8 @@
 #include "./../../../Common/Vendor/glm/glm.hpp"
 #include "./../../../Common/Vendor/glm/gtc/matrix_transform.hpp"
 #include "./../../../Common/Vendor/glm/gtc/type_ptr.hpp"
-#include "./../../../Common/ModelManager/ModelLoading/BoundingBox/BoundingBoxGeneration.h"
 #include "./../../../Common/ChunkManager/ChunkManager.h"
-#include "./../../../Common/Terrain/TerrainUtils/TerrainUtils.h"
+#include "./../../../Common/WorldInteraction/WorldInteraction.h"
 #include "./../../../Common/Logger/Logger.h"
 
 struct GlobeRenderProperties {
@@ -19,7 +18,7 @@ struct GlobeRenderProperties {
     glm::vec3 objectColor;
 
     GlobeRenderProperties() {
-        lightPos = glm::vec3(10000000.2f, 1.0f, 2.0f);
+        lightPos = glm::vec3(0.2f, 1.0f, 2.0f);
         lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
         objectColor = glm::vec3(0.8f, 0.8f, 0.8f);
     }
@@ -39,6 +38,8 @@ private:
     unsigned int shaderProgram;
     std::vector<float> vertices;
     std::vector<unsigned int> indices;
+
+    std::vector<float> m_BoundingBoxPoints;
 
     int indiceSize;
 
@@ -86,14 +87,13 @@ in vec2 TexCoords;
 in vec3 ViewPos; // Received from vertex shader
 
 uniform vec3 lightPos;
-uniform vec3 viewPos;
 uniform vec3 lightColor;
 uniform vec3 objectColor;
 
 void main()
 {
     // ambient
-    float ambientStrength = 0.1;
+    float ambientStrength = 0.01;
     vec3 ambient = ambientStrength * lightColor;
 
     // diffuse 

@@ -35,7 +35,7 @@ void SimulationManager::startSimulationThread() {
 	/* --------------------------------------------------------------------------------------------------------------------------------------------------------
 	*																Temp code for generating models
 	   -------------------------------------------------------------------------------------------------------------------------------------------------------- */
-	
+	/*
 	int totalSuccess = 0;
 	int totalFailed = 0;
 
@@ -60,12 +60,7 @@ void SimulationManager::startSimulationThread() {
 
 			ECS::Entity entity = ECS::create();
 			entity.addComponent<PositionComponent>(glm::vec3(0.0f, 0.0f, 0.0f));
-			entity.addComponent<TransformComponent>(glm::mat4(1.0),id);
-
-			ModelBoundingBox tmpBox = ModelManager::getModel(id)->boundingBox;
-			BoundingBoxComponent tmpComponentBox(tmpBox.RBB, tmpBox.RBT, tmpBox.RFT, tmpBox.RFB, tmpBox.LBB, tmpBox.LBT, tmpBox.LFT, tmpBox.LFB,glm::vec3(colorDis(gen), colorDis(gen), colorDis(gen)));
-
-			entity.addComponent<BoundingBoxComponent>(tmpComponentBox);
+			entity.addComponent<TransformComponent>(glm::mat4(1.0),id,glm::vec3(colorDis(gen), colorDis(gen), colorDis(gen)));
 			//entity.addComponent<CircularOrbitComponent>(dis2(gen), dis(gen) * 3.1415 / 180, dis(gen) * 3.1415 / 180);
 			entity.addComponent<CircularOrbitComponent>(dis2(gen), dis(gen) * 3.1415 / 180, 45.0 * 3.1415 / 180);
 			
@@ -78,7 +73,7 @@ void SimulationManager::startSimulationThread() {
 	LOG_MESSAGE(LogLevel::INFO,"Total Failed: " + std::to_string(totalFailed));
 	LOG_MESSAGE(LogLevel::INFO,"Total Vertices: " + std::to_string(totalVertices));
 	LOG_MESSAGE(LogLevel::INFO,"Total Indices: " + std::to_string(totalIndices));
-	
+	*/
 	/* --------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
 	while (true) {
